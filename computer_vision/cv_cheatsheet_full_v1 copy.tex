@@ -143,14 +143,14 @@ Each correspondence gives linear equation in $F$ entries:
 \end{aligned}
 \]
 $F$ has scale ambiguity and rank constraint; use multiple matches + least squares/RANSAC. Rectification warps images so epipolar lines become horizontal. From $F$ one projective camera choice: $P_l=[I\mid0]$, $P_r=[[e_r]_\times F\mid e_r]$.
-\key{F facts}: $F$ has scale ambiguity + rank-2 constraint, so 7 DoF; $e_r^\top F=0$ and $Fe_l=0$. Need $n\ge7$ matches in principle, more with RANSAC in practice. Learned stereo can replace SSD/NCC with CNN/classifier cost. \key{SfM}: multi-view stereo jointly estimates cameras and 3D points by minimizing reprojection error $\sum_{ij}\|x_{ij}-\pi(P_iX_j)\|^2$; solved by bundle adjustment. \key{Structured light}: projector emits known pattern to simplify correspondence; active stereo can use one camera + projector, e.g. Kinect IR.
+\key{F facts}: $F$ has scale ambiguity + rank-2 constraint, so 7 DoF; $e_r^\top F=0$ and $Fe_l=0$. Need $n\ge7$ matches in principle, more with RANSAC in practice. \key{SfM}: multi-view stereo jointly estimates cameras and 3D points by minimizing reprojection error $\sum_{ij}\|x_{ij}-\pi(P_iX_j)\|^2$; solved by bundle adjustment. \key{Structured light}: projector emits known pattern to simplify correspondence; Kinect uses IR pattern/depth sensing.
 
 \section{L5 Keypoints, Features, Matching}
 \key{Local feature goal}: match corresponding image points from same world point. Recall needs invariance to rotation/scale/affine/illumination; precision needs contrast/distinctiveness and locality. Raw patch descriptor is sensitive to shifts/rotations.
 \key{Detector desiderata}: salient + repeatable under viewpoint/illumination. Matching all pixels increases false positives unless descriptor is extremely strong.
 \subsection{SIFT \& Keypoint Selection}
-\key{SIFT}: Scale-Invariant Feature Transform. Scale invariance from Gaussian pyramid/scale-space; illumination robustness from normalized gradients; rotation invariance from dominant orientation. Descriptor: rotate local grid to dominant gradient, split into $4\times4$ cells, each with 8-bin gradient histogram $\Rightarrow128$D descriptor.
-\key{Lowe ratio test}: match nearest neighbor in descriptor space only if $r=d_1/d_2$ is low; high ratio means best and second-best matches are similarly plausible, so the match is ambiguous. Modern alternatives: supervised matchers learn from paired images (e.g. SuperGlue-style); SSL/VLM/diffusion features (DINO/CLIP/SigLIP) provide semantic correspondences.
+\key{SIFT Descriptor}: Scale-Invariant Feature Transform. Scale invariance from Gaussian pyramid/scale-space; illumination robustness from normalized gradients; rotation invariance from dominant orientation. Descriptor: rotate local grid to dominant gradient, split into $4\times4$ cells, each with 8-bin gradient histogram $\Rightarrow128$D descriptor.
+\key{SIFT matching}: nearest neighbor in Euclidean descriptor space; threshold ratio of nearest to 2nd nearest descriptor. Low ratio = good match; high ratio = ambiguous.
 \key{Corners}: intensity changes in all directions. Harris uses local second-moment matrix:
 \[
 \Delta^2\approx
@@ -198,7 +198,7 @@ AlexNet: ReLU, data augmentation, GPU split, ImageNet 2012. ResNet solves deep o
 \[
 K^2C^2\to K^2C+C^2.
 \]
-ConvNeXt: Transformer ideas in CNN: patchify stem, depthwise conv, inverted bottleneck, GeLU, LayerNorm, separate downsampling. U-Net: encoder-decoder with long skip connections for localization; descendants in segmentation, diffusion, point cloud. \key{ResNet head}: drops large FC stack; last conv $\to$ global average pooling $\to$ class FC, reducing params and supporting variable spatial input. \key{ConvNeXt V2}: not just architecture; ConvNeXt blocks are co-designed with MAE-style/self-supervised training.
+ConvNeXt: Transformer ideas in CNN: patchify stem, depthwise conv, inverted bottleneck, GeLU, BatchNorm$\to$LayerNorm, fewer norm layers, separate downsampling. U-Net: encoder-decoder with long skip connections for localization; descendants in segmentation, diffusion, point cloud. \key{ResNet head}: drops large FC stack; last conv $\to$ global average pooling $\to$ class FC, reducing params and supporting variable spatial input. \key{ConvNeXt V2}: not just architecture; ConvNeXt blocks are co-designed with MAE-style/self-supervised training.
 
 \subsection{Attention, Transformer, ViT}
 Attention with query $Q$, data $X$: $K=XW_K,V=XW_V$,
@@ -239,14 +239,14 @@ DINO: student matches teacher outputs; teacher EMA, centering+sharpening avoid c
 \[
 \theta_t\leftarrow \tau\theta_t+(1-\tau)\theta_s.
 \]
-DINOv2 scales curated data + global DINO + local masked/iBOT, strong patch features. \key{SSL eval}: pretrain encoder, discard projection head, then freeze+linear probe or fine-tune on downstream labels. \key{Energy view}: contrastive methods lower energy for positives and raise energy for negatives; regularized methods restrict low-energy volume / latent variance to avoid collapse without explicit negatives.
+DINOv2 scales curated data + global DINO + local masked/iBOT, strong patch features. \key{SSL eval}: pretrain encoder, discard projection head, then freeze+linear probe or fine-tune on downstream labels.
 
 \subsection{JEPA \& Vision-Language}
 JEA aligns embeddings $s_x=Enc_x(x),s_y=Enc_y(y)$. JEPA predicts target representation:
 \[
 \hat s_y=Pred(Enc_x(x),z),\qquad \mathcal L=\|\hat s_y-s_y\|^2.
 \]
-Not pixel reconstruction; predicts abstract representation, avoids irrelevant texture. Since $Enc_y$ is not invertible, JEPA does not define normalized $p(y|x)$ and is not a standard generative/probabilistic model. H-JEPA passes latents hierarchically to predict more abstract/longer-term structure. Need information constraints: $Enc_x,Enc_y$ informative; prediction error small; latent $z$ low-information so it cannot store answer. Collapse: all inputs map to constant; SIGReg forces latent distribution variance/normality.
+Not pixel reconstruction; predicts abstract representation and avoids irrelevant texture. Because $Enc_y$ is not invertible, prediction in representation space need not reconstruct full $y$. H-JEPA passes latents hierarchically to predict more abstract/longer-term structure. Collapse: all inputs map to constant; SIGReg regularizes latent statistics to avoid collapse.
 \key{CLIP}: image-text contrastive pretraining on pairs, open vocabulary. Batch similarity:
 \[
 I_i=f_{\mathrm{img}}(x_i),\quad T_j=f_{\mathrm{text}}(t_j),\quad S_{ij}=I_i^\top T_j.
@@ -255,7 +255,7 @@ Diagonal matched, off-diagonal negatives; train image-to-text and text-to-image.
 \[
 \hat c=\argmax_{c\in\mathcal C} f_{\mathrm{img}}(x)^\top f_{\mathrm{text}}(\text{``a photo of a }c\text{''}).
 \]
-SigLIP replaces softmax contrastive with sigmoid pairwise loss, less batch-size coupled. CoCa combines CLIP-style contrastive with captioning decoder. \key{CLIP limitations}: image/text embeddings form separated cones (modality gap); image-level captions are weak on relations, counting, and compositional order (horse eating grass vs grass eating horse), improved by hard negatives, region captions, or stronger VLM training. LLaVA connects visual encoder to LLM via projection and instruction tuning; Flamingo uses gated cross-attention, masked attention, and in-context multimodal learning.
+SigLIP replaces softmax contrastive with sigmoid pairwise loss, less batch-size coupled. CoCa combines CLIP-style contrastive with captioning decoder. \key{VLM notes}: CLIP has modality gap; image-level captions give weak local/region supervision, so slides discuss region captions and VLM training. LLaVA connects visual encoder to LLM; Flamingo uses gated cross-attention, masked attention, and in-context multimodal learning.
 
 \section{L8 Object Detection}
 \subsection{Task \& Metrics}
@@ -302,7 +302,7 @@ Upsampling: interpolation, transposed convolution (linear operator transpose, no
 \subsection{Mask R-CNN, SAM, Depth, Generation}
 Mask R-CNN = Faster R-CNN + FCN mask head on RoIs. Outputs $\{(b_i,c_i,m_i)\}$. Mask head $M\in[0,1]^{K\times m\times m}$, uses per-pixel sigmoid BCE for GT class. RoIAlign avoids RoIPool quantization using bilinear sampling; crucial for masks/keypoints. Keypoints as heatmaps $\hat H\in\R^{K\times H\times W}$.
 SAM: promptable segmentation foundation model. Components: heavy ViT image encoder (cacheable), prompt encoder (points/boxes/text/masks), lightweight mask decoder with two-way attention. Outputs multiple masks for ambiguity + predicted IoU for ranking. Limitations: may miss fine structures, hallucinate small disconnected components, fail boundaries/text-to-mask, and lose to domain-specific tools. SA-1B built with model-in-the-loop stages; SAM 2 stores previous-frame memory for video, preserving object identity under motion/occlusion and supporting streaming interaction.
-Depth Anything: teacher/student, labeled + 65M unlabeled pseudo labels, DINOv2 backbone; perturbation consistency (color jitter/blur/CutMix) lets student generalize beyond teacher. V2 uses synthetic data for precise depth then bridges sim-to-real. Single-image depth is not true 3D and not necessarily multi-view consistent; DA3 adds depth+ray+pose/cross-view geometry targets.
+Depth Anything: teacher/student, labeled + 65M unlabeled pseudo labels, DINOv2 backbone; perturbation consistency (color jitter/blur/CutMix) lets student generalize beyond teacher. V2 uses synthetic data for precise depth then bridges sim-to-real. Single-image depth is not true 3D and not necessarily multi-view consistent.
 Generation as dense prediction: GAN/cGAN/Pix2Pix/DDPM/LDM/DiT all predict dense maps over pixels/latents/patches. PatchGAN outputs spatial realism map over local patches; LDM denoises latent $z_t$; DiT replaces U-Net denoiser with ViT.
 
 \section{L10 Synthetic Data}
@@ -399,11 +399,11 @@ Gaussian path:
 z_t=\alpha_t x+\sigma_t\epsilon,\quad \mathrm{SNR}=\alpha_t^2/\sigma_t^2,\quad \lambda=\log \mathrm{SNR}.
 \]
 Equivalent targets: clean $x$, noise $\epsilon$, score $s_t(z)=-\E[\epsilon|z_t=z]/\sigma_t$, velocity/path derivative $v_t=\dot\alpha_tx+\dot\sigma_t\epsilon$, denoiser $D(z_t)=\E[x|z_t]$. Weighting and schedule can be expressed in SNR/log-SNR coordinates; epsilon-prediction is not uniform in SNR, log-SNR makes interpretation cleaner.
-\key{Forward paths}: VE/EDM $x_t=x_0+\sigma_t\epsilon$; VP/DDPM $x_t=\alpha_tx_0+\sigma_t\epsilon,\alpha_t^2+\sigma_t^2=1$; Flow Matching $x_t=(1-t)x_0+t\epsilon$. Only VP keeps variance normalized. \key{Big equivalence}: diffusion $\approx$ score learning $\approx$ denoising $\approx$ flow matching $\approx$ probability-flow ODE for Gaussian paths. \key{VLB weight}: in $x_0$ prediction, DDPM VLB weights each step by SNR drop,
+\key{Forward paths}: VE/EDM $x_t=x_0+\sigma_t\epsilon$; VP/DDPM $x_t=\alpha_tx_0+\sigma_t\epsilon,\alpha_t^2+\sigma_t^2=1$; Flow Matching $x_t=(1-t)x_0+t\epsilon$. Only VP keeps variance normalized. \key{VLB weight}: in $x_0$ prediction, DDPM VLB weights each step by SNR drop,
 \[
 L_{t-1}\propto (r_{t-1}-r_t)\|D_\theta(x_t,t)-x_0\|^2,\qquad r=\mathrm{SNR}.
 \]
-\key{Training design}: choose path, prediction target $(\epsilon,x_0,s,v)$, objective weight $w(\lambda)$, and noise proposal/schedule $q(\lambda)$; Monte Carlo estimator uses weight $w/q$. Monotone weighting is not just heuristic: it can be interpreted as a mixture of ELBOs on Gaussian-noise-augmented data. Min-SNR clips high-SNR weights; sigmoid/EDM emphasize mid-noise or detail levels.
+\key{Training design}: choose path, prediction target $(\epsilon,x_0,s,v)$, objective weight $w(\lambda)$, and noise proposal/schedule $q(\lambda)$; Monte Carlo estimator uses weight $w/q$. Slides compare uniform, EDM/sigmoid, and Min-SNR weighting; monotone weighted objectives can be rewritten as mixtures of ELBOs on Gaussian-noise-augmented data.
 
 \section{L13 Beyond Diffusion}
 \subsection{Normalizing Flow}
@@ -447,9 +447,6 @@ p(x)=\prod_{i=1}^N p(x_i|x_{<i}),
 \]
 stable MLE/cross-entropy but serial $O(N)$ sampling and ordering bias. Image AR tokenizes pixels/patches/codebook tokens; Transformer provides long-range context. \key{AR evolution}: PixelRNN models raw pixels but training/inference are sequential; PixelCNN uses masked convolution so training is parallel over pixels but sampling remains sequential. VQ-VAE shortens image sequence via discrete codebook tokens. Loss has reconstruction + codebook + commitment terms; straight-through estimator copies gradient through nearest-code lookup. JetFormer-style soft tokens use invertible flow tokenizer + AR Transformer, preserving continuous information and exact likelihood more directly than hard codebooks.
 Masked/flexible-order generation predicts masked tokens in iterative refinement; faster than AR, useful for editing/inpainting, likelihood often approximate or schedule-dependent. \key{MaskGIT}: VQGAN tokenizer + bidirectional Transformer; train by masking random token subset and cross-entropy on masked tokens only. Iterative decoding predicts all masked positions in parallel, samples tokens, keeps high-confidence ones, and follows a mask schedule; steps drop from $O(N)$ to about $8$--$12$, but bidirectional attention cannot use KV cache. \key{RandAR}: random-order causal generation adds position instruction tokens, allowing KV-cache and parallel decoding of multiple requested positions while avoiding fixed raster order. \key{Comparison}: Flow exact likelihood/fast/stable but Jacobian constraints; GAN no likelihood/fast but unstable and mode collapse; AR exact likelihood/stable but slow serial order; Masked approx likelihood/medium speed with mask schedule; Diffusion ELBO/score/stable but many denoise steps.
-
-\section{Cross-Lecture Exam Hooks}
-\key{Geometry chain}: pinhole projection $\to$ depth ambiguity $\to$ stereo disparity $\to$ epipolar constraint $\to$ rectification $\to$ dense depth. \key{Feature chain}: local keypoints/SIFT/RANSAC $\to$ homography/mosaic/SfM; modern features from SSL/VLM. \key{CNN-to-Transformer chain}: conv local bias and weight sharing; attention global interaction; ViT patch tokens; ConvNeXt borrows Transformer design. \key{Dense chain}: FCN $\to$ U-Net/FPN $\to$ Mask R-CNN/SAM/depth/diffusion. \key{Data chain}: supervised labels expensive; SSL, synthetic data, web data curation, pseudo-label teacher/student all scale supervision.
 
 \end{multicols*}
 \end{document}
