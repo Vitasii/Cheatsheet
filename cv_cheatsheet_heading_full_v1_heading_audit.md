@@ -1,0 +1,670 @@
+---
+created: 2026-06-08
+updated: 2026-06-08
+---
+# Heading Audit
+
+Every Markdown heading below is emitted into `cv_cheatsheet_heading_full_v1.tex`.
+
+- Source headings: 617
+- Emitted headings: 617
+- Status: OK
+
+## Part_1/L2_Image Basics and Filters.md
+
+- [1] `# 1 Digital Image：从连续世界到离散矩阵 [[lecture2 Image Basics and Filters.pdf#page=7|7→]]`
+- [2] `## 1.1 Digital Camera：sensor array 代替 film [[lecture2 Image Basics and Filters.pdf#page=7|7→]]`
+- [3] `## 1.2 Sampling and Quantization：位置离散化与数值离散化 [[lecture2 Image Basics and Filters.pdf#page=9|9→]]`
+- [4] `## 1.3 Resolution：spatial pixel density [[lecture2 Image Basics and Filters.pdf#page=11|11→]]`
+- [5] `## 1.4 Digital Image Matrix：height × width × channel [[lecture2 Image Basics and Filters.pdf#page=12|12→]]`
+- [6] `# 2 Image as Functions：把图像看成函数 [[lecture2 Image Basics and Filters.pdf#page=15|15→]]`
+- [7] `## 2.1 Grayscale Image as Function $f:\mathbb{R}^2\to\mathbb{R}$ [[lecture2 Image Basics and Filters.pdf#page=15|15→]]`
+- [8] `## 2.2 Point Transformation：只改 intensity，不改位置 [[lecture2 Image Basics and Filters.pdf#page=16|16→]]`
+- [9] `## 2.3 Spatial Transformation：用另一个位置的值生成当前位置 [[lecture2 Image Basics and Filters.pdf#page=18|18→]]`
+- [10] `## 2.4 Thresholded Spatial Transformation：坐标变换加条件 mask [[lecture2 Image Basics and Filters.pdf#page=20|20→]]`
+- [11] `# 3 Color Space：颜色的物理与坐标表示 [[lecture2 Image Basics and Filters.pdf#page=23|23→]]`
+- [12] `## 3.1 What Is Color：light、surface、visual system 的交互结果 [[lecture2 Image Basics and Filters.pdf#page=23|23→]]`
+- [13] `## 3.2 Linear Color Spaces：用 primaries 的线性组合表示颜色 [[lecture2 Image Basics and Filters.pdf#page=25|25→]]`
+- [14] `## 3.3 Red Green Blue (RGB) Space：monochromatic primaries 的三通道表示 [[lecture2 Image Basics and Filters.pdf#page=26|26→]]`
+- [15] `## 3.4 Hue Saturation Value (HSV)：非线性颜色空间 [[lecture2 Image Basics and Filters.pdf#page=27|27→]]`
+- [16] `# 4 Histogram：灰度分布的统计视图 [[lecture2 Image Basics and Filters.pdf#page=29|29→]]`
+- [17] `## 4.1 Image Histogram：每个 gray level 出现的频率 [[lecture2 Image Basics and Filters.pdf#page=29|29→]]`
+- [18] `## 4.2 Histogram Use Case：对比度、曝光和 threshold 的线索 [[lecture2 Image Basics and Filters.pdf#page=31|31→]]`
+- [19] `# 5 Noise Reduction Motivation：为什么需要 filtering [[lecture2 Image Basics and Filters.pdf#page=33|33→]]`
+- [20] `## 5.1 Types of Noise：salt-and-pepper、impulse、Gaussian noise [[lecture2 Image Basics and Filters.pdf#page=34|34→]]`
+- [21] `## 5.2 First Attempt：用 neighborhood average 替代当前 pixel [[lecture2 Image Basics and Filters.pdf#page=35|35→]]`
+- [22] `## 5.3 Weighted Moving Average：从 uniform weights 到 non-uniform weights [[lecture2 Image Basics and Filters.pdf#page=37|37→]]`
+- [23] `## 5.4 Moving Average in 2D：二维 neighborhood 上的 smoothing [[lecture2 Image Basics and Filters.pdf#page=39|39→]]`
+- [24] `# 6 Correlation Filtering：用 kernel 做局部线性组合 [[lecture2 Image Basics and Filters.pdf#page=46|46→]]`
+- [25] `## 6.1 Cross-Correlation Definition：$G=H\otimes F$ [[lecture2 Image Basics and Filters.pdf#page=47|47→]]`
+- [26] `## 6.2 Averaging Filter：box kernel [[lecture2 Image Basics and Filters.pdf#page=48|48→]]`
+- [27] `## 6.3 Boundary Issues：full、same、valid 与边界外推 [[lecture2 Image Basics and Filters.pdf#page=50|50→]]`
+- [28] `## 6.4 Identity、Shift、Blur、Sharpening Filters [[lecture2 Image Basics and Filters.pdf#page=52|52→]]`
+- [29] `# 7 Gaussian and Median Filters：平滑但尽量保留结构 [[lecture2 Image Basics and Filters.pdf#page=62|62→]]`
+- [30] `## 7.1 Gaussian Filter：nearest neighbors 权重最大 [[lecture2 Image Basics and Filters.pdf#page=62|62→]]`
+- [31] `## 7.2 Kernel Size and Variance：finite support 与 smoothing extent [[lecture2 Image Basics and Filters.pdf#page=65|65→]]`
+- [32] `## 7.3 Properties of Smoothing Filters：positive、sum-to-one、low-pass [[lecture2 Image Basics and Filters.pdf#page=68|68→]]`
+- [33] `## 7.4 Mean vs Gaussian：uniform average 与 distance-aware average [[lecture2 Image Basics and Filters.pdf#page=64|64→]]`
+- [34] `## 7.5 Median Filter：nonlinear、spike removal、edge preserving [[lecture2 Image Basics and Filters.pdf#page=70|70→]]`
+- [35] `# 8 Convolution：先翻转 kernel，再做 correlation [[lecture2 Image Basics and Filters.pdf#page=74|74→]]`
+- [36] `## 8.1 Convolution Definition：flip both dimensions [[lecture2 Image Basics and Filters.pdf#page=74|74→]]`
+- [37] `## 8.2 Shift Invariance：同样 pattern 在任何位置行为相同 [[lecture2 Image Basics and Filters.pdf#page=75|75→]]`
+- [38] `## 8.3 Algebraic Properties：commutative、associative、distributive [[lecture2 Image Basics and Filters.pdf#page=76|76→]]`
+- [39] `## 8.4 Optical Convolution：camera shake as blur kernel [[lecture2 Image Basics and Filters.pdf#page=77|77→]]`
+- [40] `# 9 Separable Filters：把 2D filter 拆成两个 1D filters [[lecture2 Image Basics and Filters.pdf#page=79|79→]]`
+- [41] `## 9.1 Separability Definition：row convolution + column convolution [[lecture2 Image Basics and Filters.pdf#page=79|79→]]`
+- [42] `## 9.2 Computational Speedup：从 $O(k^2)$ 到 $O(2k)$ [[lecture2 Image Basics and Filters.pdf#page=79|79→]]`
+- [43] `## 9.3 Gaussian Filter Is Separable [[lecture2 Image Basics and Filters.pdf#page=80|80→]]`
+- [44] `## 9.4 How to Tell Separability：analytic manipulation、rank、SVD [[lecture2 Image Basics and Filters.pdf#page=81|81→]]`
+- [45] `# 10 Filter Applications：从 feature extraction 到 template matching [[lecture2 Image Basics and Filters.pdf#page=83|83→]]`
+- [46] `## 10.1 Hybrid Images：low frequency 与 high frequency 的感知组合 [[lecture2 Image Basics and Filters.pdf#page=83|83→]]`
+- [47] `## 10.2 Filters for Features：从 raw pixels 到 intermediate representation [[lecture2 Image Basics and Filters.pdf#page=84|84→]]`
+- [48] `## 10.3 Filters in Modern Convolutional Neural Networks (CNN) [[lecture2 Image Basics and Filters.pdf#page=85|85→]]`
+- [49] `## 10.4 Template Matching：filter as matched template [[lecture2 Image Basics and Filters.pdf#page=86|86→]]`
+- [50] `## 10.5 Correlation Map：response peak 表示 candidate location [[lecture2 Image Basics and Filters.pdf#page=88|88→]]`
+- [51] `# 11 Summary：L2 的主线 [[lecture2 Image Basics and Filters.pdf#page=91|91→]]`
+
+## Part_1/L3_Camera Models.md
+
+- [52] `# 1 Perspective Projection Geometry [[lecture3 Camera Models.pdf#page=15|↗]]`
+- [53] `## 1.1 Focal Length [[lecture3 Camera Models.pdf#page=17|↗]]`
+- [54] `## 1.2 Camera Coordinate System [[lecture3 Camera Models.pdf#page=19|↗]]`
+- [55] `### 1.2.1 Principal Point and Image Coordinates [[lecture3 Camera Models.pdf#page=24|↗]]`
+- [56] `## 1.3 Projection Ray and Ambiguity [[lecture3 Camera Models.pdf#page=26|↗]]`
+- [57] `### 1.3.1 Depth Ambiguity [[lecture3 Camera Models.pdf#page=29|↗]]`
+- [58] `## 1.4 Projection Equations [[lecture3 Camera Models.pdf#page=31|↗]]`
+- [59] `# 2 Homogeneous Coordinates and Intrinsics [[lecture3 Camera Models.pdf#page=33|↗]]`
+- [60] `## 2.1 Homogeneous Coordinates [[lecture3 Camera Models.pdf#page=34|↗]]`
+- [61] `## 2.2 Lines in Homogeneous Coordinates [[lecture3 Camera Models.pdf#page=35|↗]]`
+- [62] `## 2.3 Perspective Projection as Matrix Multiplication [[lecture3 Camera Models.pdf#page=36|↗]]`
+- [63] `## 2.4 Camera Intrinsics [[lecture3 Camera Models.pdf#page=37|↗]]`
+- [64] `### 2.4.1 Non-Square Pixels and Skew [[lecture3 Camera Models.pdf#page=38|↗]]`
+- [65] `# 3 Projection Properties and Vanishing Points [[lecture3 Camera Models.pdf#page=41|↗]]`
+- [66] `## 3.1 Basic Projection Properties [[lecture3 Camera Models.pdf#page=42|↗]]`
+- [67] `## 3.2 Vanishing Point [[lecture3 Camera Models.pdf#page=47|↗]]`
+- [68] `### 3.2.1 Why Same Direction Gives One Point [[lecture3 Camera Models.pdf#page=52|↗]]`
+- [69] `## 3.3 Finding 3D Direction from Vanishing Point [[lecture3 Camera Models.pdf#page=53|↗]]`
+- [70] `### 3.3.1 Recovering Direction with $K^{-1}$ [[lecture3 Camera Models.pdf#page=62|↗]]`
+- [71] `## 3.4 Lines Parallel to Image Plane [[lecture3 Camera Models.pdf#page=54|↗]]`
+- [72] `## 3.5 Vanishing Line and Horizon Line [[lecture3 Camera Models.pdf#page=64|↗]]`
+- [73] `## 3.6 Height from Horizon [[lecture3 Camera Models.pdf#page=67|↗]]`
+- [74] `# 4 Orthographic Projection [[lecture3 Camera Models.pdf#page=72|↗]]`
+- [75] `## 4.1 Definition [[lecture3 Camera Models.pdf#page=72|↗]]`
+- [76] `## 4.2 Orthographic vs Perspective [[lecture3 Camera Models.pdf#page=74|↗]]`
+- [77] `# 5 Camera Extrinsics and Projection Matrix [[lecture3 Camera Models.pdf#page=75|↗]]`
+- [78] `## 5.1 Intrinsics vs Extrinsics [[lecture3 Camera Models.pdf#page=75|↗]]`
+- [79] `## 5.2 Why World and Camera Coordinates [[lecture3 Camera Models.pdf#page=76|↗]]`
+- [80] `## 5.3 Camera Extrinsics [[lecture3 Camera Models.pdf#page=84|↗]]`
+- [81] `## 5.4 Projection Matrix $P$ [[lecture3 Camera Models.pdf#page=88|↗]]`
+- [82] `### 5.4.1 Compact Notation [[lecture3 Camera Models.pdf#page=89|↗]]`
+- [83] `# 6 Calibration and Single-View Applications [[lecture3 Camera Models.pdf#page=90|↗]]`
+- [84] `## 6.1 Camera Calibration [[lecture3 Camera Models.pdf#page=90|↗]]`
+- [85] `## 6.2 Calibration from Vanishing Geometry [[lecture3 Camera Models.pdf#page=91|↗]]`
+- [86] `## 6.3 Single View Metrology [[lecture3 Camera Models.pdf#page=92|↗]]`
+- [87] `## 6.4 Inserting Objects into Images [[lecture3 Camera Models.pdf#page=95|↗]]`
+- [88] `### 6.4.1 Rendering Equation [[lecture3 Camera Models.pdf#page=102|↗]]`
+- [89] `## 6.5 From Fun to Useful [[lecture3 Camera Models.pdf#page=106|↗]]`
+
+## Part_1/L4_Depth from Stereo.md
+
+- [90] `# 1 Stereo：两张图用 correspondence 消除 depth ambiguity [[lecture4 Stereo.pdf#page=2|2↗]]`
+- [91] `## 1.1 Single-View Ambiguity：一个 pixel 只确定一条 ray [[lecture4 Stereo.pdf#page=2|2↗]]`
+- [92] `## 1.2 Two Views：第二张图把 ray 约束成 epipolar line [[lecture4 Stereo.pdf#page=3|3↗]]`
+- [93] `# 2 Parallel Calibrated Cameras：已知 baseline 时 stereo 最简单 [[lecture4 Stereo.pdf#page=8|8↗]]`
+- [94] `## 2.1 Baseline $B$：right camera 只是向右平移 [[lecture4 Stereo.pdf#page=8|8↗]]`
+- [95] `## 2.2 Horizontal Epipolar Lines：parallel stereo 中 $y_l=y_r$ [[lecture4 Stereo.pdf#page=10|10↗]]`
+- [96] `## 2.3 Disparity：越近 $d$ 越大 [[lecture4 Stereo.pdf#page=35|35↗]]`
+- [97] `## 2.4 $Z=fB/d$：disparity 反推出 depth $\frac{{}Z}{f} = \frac{B}{d}$ [[lecture4 Stereo.pdf#page=16|16↗]]`
+- [98] `## 2.5 Full 3D：有了 $Z$ 就能反推 $X,Y$ [[lecture4 Stereo.pdf#page=73|73↗]]`
+- [99] `# 3 Correspondence：stereo 的难点是可靠匹配 [[lecture4 Stereo.pdf#page=19|19↗]]`
+- [100] `## 3.1 Scanline Search：parallel stereo 只沿同一行找 match [[lecture4 Stereo.pdf#page=20|20↗]]`
+- [101] `## 3.2 Patch Matching：对应点的局部窗口应相似 [[lecture4 Stereo.pdf#page=22|22↗]]`
+- [102] `## 3.3 Disparity Map，Patch Size Tradeoff：小 patch 细但 noisy，大 patch 稳但糊 [[lecture4 Stereo.pdf#page=37|37↗]]`
+- [103] `## 3.4 Energy Minimization：让 disparity map 更平滑 [[lecture4 Stereo.pdf#page=38|38↗]]`
+- [104] `## 3.5 KITTI：用 driving benchmark 评估 stereo [[lecture4 Stereo.pdf#page=40|40↗]]`
+- [105] `# 4 General Epipolar Geometry：任意 camera pose 仍能把搜索限制到线 [[lecture4 Stereo.pdf#page=44|44↗]]`
+- [106] `## 4.1 General Case：web photos 通常不是 parallel cameras [[lecture4 Stereo.pdf#page=44|44↗]]`
+- [107] `## 4.2 Epipoles：另一个 camera center 在当前 image 中的位置 [[lecture4 Stereo.pdf#page=51|51↗]]`
+- [108] `## 4.3 Epipolar Plane：$C_l,C_r,P$ 决定两条 epipolar lines [[lecture4 Stereo.pdf#page=55|55↗]]`
+- [109] `## 4.4 Epipolar Constraint：2D search 降成 1D search [[lecture4 Stereo.pdf#page=58|58↗]]`
+- [110] `# 5 Fundamental Matrix：一个 $3\times 3$ matrix 描述 point-to-line 映射 [[lecture4 Stereo.pdf#page=62|62↗]]`
+- [111] `## 5.1 General-Camera Pipeline：先估 $F$，再 rectify 后做 stereo [[lecture4 Stereo.pdf#page=62|62↗]]`
+- [112] `## 5.2 Definition of $F$：left point 映射到 right epipolar line [[lecture4 Stereo.pdf#page=63|63↗]]`
+- [113] `## 5.3 $l_r = Fp_l,F=[e_r]_\times H_\pi$：epipole 和 homography 构造 point-to-line map [[lecture4 Stereo.pdf#page=64|64↗]]`
+- [114] `## 5.4 $p_r^TFp_l=0$ by true match 必须落在 epipolar line 上 [[lecture4 Stereo.pdf#page=67|67↗]]`
+- [115] `## 5.5 Estimating $F$：至少 7 个 reliable correspondences [[lecture4 Stereo.pdf#page=68|68↗]]`
+- [116] `## 5.6 Rectification：把 epipolar lines 拉成水平线 [[lecture4 Stereo.pdf#page=69|69↗]]`
+- [117] `# 6 Camera Matrices from $F$：relative pose 可从 correspondences 恢复 [[lecture4 Stereo.pdf#page=71|71↗]]`
+- [118] `## 6.1 Projective Ambiguity：可选 $P_l=[I\mid0]$ 和 $P_r=[[e_r]_\times F\mid e_r]$ [[lecture4 Stereo.pdf#page=71|71↗]]`
+- [119] `## 6.2 Right Epipole：$e_r$ 是 $F^T$ 的 null vector [[lecture4 Stereo.pdf#page=71|71↗]]`
+- [120] `# 7 Summary：parallel stereo 用 disparity，general stereo 先估 $F$ [[lecture4 Stereo.pdf#page=73|73↗]]`
+- [121] `## 7.1 Parallel Cameras：$d=x_l-x_r$ 且 $Z=fB/d$ [[lecture4 Stereo.pdf#page=73|73↗]]`
+- [122] `## 7.2 General Cameras：$F$ 给出 epipolar constraint 并支持 rectification [[lecture4 Stereo.pdf#page=74|74↗]]`
+- [123] `# 8 Beyond Two-View Stereo：多视角和主动光也能恢复 depth [[lecture4 Stereo.pdf#page=75|75↗]]`
+- [124] `## 8.1 Structure from Motion：多于两张图时同时恢复 pose 和 structure [[lecture4 Stereo.pdf#page=75|75↗]]`
+- [125] `## 8.2 Bundle Adjustment：最小化 re-projection error [[lecture4 Stereo.pdf#page=76|76↗]]`
+- [126] `## 8.3 Structured Light：用 projector 简化 correspondence [[lecture4 Stereo.pdf#page=77|77↗]]`
+- [127] `## 8.4 Kinect：structured infrared light 提供 depth cues [[lecture4 Stereo.pdf#page=78|78↗]]`
+
+## Part_1/L5_Keypoints, Local Features and Matching.md
+
+- [128] `# 1 Local Feature`
+- [129] `## 1.1 Raw patches as local descriptors`
+- [130] `## 1.2 SIFT (Scale Invariant Feature Transform)`
+- [131] `# 2 Keypoiont Selection`
+- [132] `## 2.1 Corner`
+- [133] `## 2.2 Scale-Invariant Interest Points`
+- [134] `# 3 Keypoint Matching`
+- [135] `# 4 Homography`
+- [136] `## 4.1 Basic Transformation`
+- [137] `## 4.2 Affine Transformations`
+- [138] `## 4.3 Projective Transformations`
+- [139] `## 4.4 Image Mosaic`
+- [140] `### 4.4.1 获得全景图片`
+- [141] `### 4.4.2 Homography`
+- [142] `# 5 Robust Fitting with RANSAC`
+- [143] `## 5.1 Outliers`
+- [144] `## 5.2 RANSAC 2 fit lines`
+- [145] `## 5.3 Trials`
+- [146] `## 5.4 RANSAC 2 find transformation`
+- [147] `## 5.5 Pros and Cons`
+
+## Part_1/L6_Vision Neural Networks.md
+
+- [148] `# 1 CNN：从视觉皮层到卷积网络 [[lecture6 Vision Neural Networks.pdf#page=3|3↗]]`
+- [149] `## 1.1 History：CNN 的核心直觉来自 local receptive field [[lecture6 Vision Neural Networks.pdf#page=3|3↗]]`
+- [150] `## 1.2 Neocognitron 到 LeNet/AlexNet：CNN 的结构逐渐成型 [[lecture6 Vision Neural Networks.pdf#page=10|10↗]]`
+- [151] `## 1.3 Fully Connected Layer：会打平 spatial structure [[lecture6 Vision Neural Networks.pdf#page=14|14↗]]`
+- [152] `# 2 Convolution Layer：保留 spatial structure 的局部线性算子 [[lecture6 Vision Neural Networks.pdf#page=15|15↗]]`
+- [153] `## 2.1 Filter：在空间上 slide，沿 depth 全连接 [[lecture6 Vision Neural Networks.pdf#page=16|16↗]]`
+- [154] `## 2.2 Activation Map：一个 filter 产生一张 map [[lecture6 Vision Neural Networks.pdf#page=19|19↗]]`
+- [155] `## 2.3 ConvNet：CONV 和 activation function 交替堆叠 [[lecture6 Vision Neural Networks.pdf#page=21|21↗]]`
+- [156] `## 2.4 Output Volume：卷积层尺寸公式 [[lecture6 Vision Neural Networks.pdf#page=28|28↗]]`
+- [157] `## 2.5 Example：$32\times 32\times 3$ 输入和 10 个 $5\times 5$ filters [[lecture6 Vision Neural Networks.pdf#page=24|24↗]]`
+- [158] `## 2.6 Common Settings：padding 常用来保持 spatial size [[lecture6 Vision Neural Networks.pdf#page=29|29↗]]`
+- [159] `## 2.7 $1\times 1$ Convolution：只混合 channel，不混合 spatial neighborhood [[lecture6 Vision Neural Networks.pdf#page=30|30↗]]`
+- [160] `## 2.8 Neuron View：conv layer 是局部连接 + 参数共享 [[lecture6 Vision Neural Networks.pdf#page=32|32↗]]`
+- [161] `# 3 Pooling、FC、Activation Functions [[lecture6 Vision Neural Networks.pdf#page=37|37↗]]`
+- [162] `## 3.1 Pooling Layer：降低 spatial size，不改变 channel 数 [[lecture6 Vision Neural Networks.pdf#page=37|37↗]]`
+- [163] `## 3.2 Fully Connected Layer：末端做全局决策 [[lecture6 Vision Neural Networks.pdf#page=40|40↗]]`
+- [164] `## 3.3 Activation Functions：nonlinearity 让网络能组合复杂函数 [[lecture6 Vision Neural Networks.pdf#page=42|42↗]]`
+- [165] `## 3.4 Sigmoid：可解释但训练不友好 [[lecture6 Vision Neural Networks.pdf#page=44|44↗]]`
+- [166] `## 3.5 ReLU：现代 CNN 的默认选择之一 [[lecture6 Vision Neural Networks.pdf#page=45|45↗]]`
+- [167] `# 4 Training：Initialization、Normalization、Regularization [[lecture6 Vision Neural Networks.pdf#page=46|46↗]]`
+- [168] `## 4.1 Constant Initialization：所有 neuron 会学成一样 [[lecture6 Vision Neural Networks.pdf#page=47|47↗]]`
+- [169] `## 4.2 Small Random Initialization：深层 activation 可能趋近 0 [[lecture6 Vision Neural Networks.pdf#page=48|48↗]]`
+- [170] `## 4.3 Xavier Initialization：让各层 activation scale 更稳定 [[lecture6 Vision Neural Networks.pdf#page=50|50↗]]`
+- [171] `## 4.4 Normalization：训练中仍要控制 feature scale [[lecture6 Vision Neural Networks.pdf#page=51|51↗]]`
+- [172] `## 4.5 Beyond Training Error：真正关心 generalization gap [[lecture6 Vision Neural Networks.pdf#page=52|52↗]]`
+- [173] `## 4.6 Early Stopping：validation accuracy 下降时停止 [[lecture6 Vision Neural Networks.pdf#page=53|53↗]]`
+- [174] `## 4.7 Data Augmentation：训练时主动制造变化 [[lecture6 Vision Neural Networks.pdf#page=54|54↗]]`
+- [175] `## 4.8 Regularization in Practice：training 加噪，testing marginalize [[lecture6 Vision Neural Networks.pdf#page=56|56↗]]`
+- [176] `# 5 CNN Architectures：AlexNet、ResNet、DenseNet、Depthwise Separable Conv [[lecture6 Vision Neural Networks.pdf#page=57|57↗]]`
+- [177] `## 5.1 ILSVRC：CNN 之后进入 depth revolution [[lecture6 Vision Neural Networks.pdf#page=58|58↗]]`
+- [178] `## 5.2 AlexNet：ImageNet 2012 的转折点 [[lecture6 Vision Neural Networks.pdf#page=59|59↗]]`
+- [179] `## 5.3 ResNet：用 residual mapping 解决深层优化问题 [[lecture6 Vision Neural Networks.pdf#page=63|63↗]]`
+- [180] `## 5.4 ResNet Architecture：stack residual blocks [[lecture6 Vision Neural Networks.pdf#page=71|71↗]]`
+- [181] `## 5.5 Bottleneck Block：ResNet-50+ 的效率设计 [[lecture6 Vision Neural Networks.pdf#page=76|76↗]]`
+- [182] `## 5.6 ResNet Results：非常深的网络可以正常训练 [[lecture6 Vision Neural Networks.pdf#page=78|78↗]]`
+- [183] `## 5.7 DenseNet：每层连接到之后所有层 [[lecture6 Vision Neural Networks.pdf#page=80|80↗]]`
+- [184] `## 5.8 Depthwise Separable Conv：把 standard conv 分解成 depthwise + pointwise [[lecture6 Vision Neural Networks.pdf#page=81|81↗]]`
+- [185] `# 6 Attention and Self-Attention [[lecture6 Vision Neural Networks.pdf#page=84|84↗]]`
+- [186] `## 6.1 CNN Limitations：local receptive field 对 long-range interaction 不够直接 [[lecture6 Vision Neural Networks.pdf#page=85|85↗]]`
+- [187] `## 6.2 Attention Layer：output 是 inputs 的 weighted sum [[lecture6 Vision Neural Networks.pdf#page=87|87↗]]`
+- [188] `## 6.3 General Attention：用 key/value projection 分离匹配和输出 [[lecture6 Vision Neural Networks.pdf#page=88|88↗]]`
+- [189] `## 6.4 Self-Attention：每个 input 同时产生 query、key、value [[lecture6 Vision Neural Networks.pdf#page=89|89↗]]`
+- [190] `## 6.5 Masked Self-Attention：不允许看未来 token [[lecture6 Vision Neural Networks.pdf#page=90|90↗]]`
+- [191] `## 6.6 Multi-Head Self-Attention：并行运行多个 attention heads [[lecture6 Vision Neural Networks.pdf#page=91|91↗]]`
+- [192] `## 6.7 Self-Attention 是 4 个 matrix multiplies [[lecture6 Vision Neural Networks.pdf#page=93|93↗]]`
+- [193] `## 6.8 FlashAttention：不显式存完整 attention matrix [[lecture6 Vision Neural Networks.pdf#page=96|96↗]]`
+- [194] `# 7 Transformer and Vision Transformer [[lecture6 Vision Neural Networks.pdf#page=98|98↗]]`
+- [195] `## 7.1 Convolution vs Self-Attention：grid bias vs global vector interaction [[lecture6 Vision Neural Networks.pdf#page=98|98↗]]`
+- [196] `## 7.2 Transformer Block：interaction 只靠 self-attention [[lecture6 Vision Neural Networks.pdf#page=99|99↗]]`
+- [197] `## 7.3 Transformer Scale：结构没大变，规模变很大 [[lecture6 Vision Neural Networks.pdf#page=100|100↗]]`
+- [198] `## 7.4 Vision Transformer：把 image 切成 patches 当 token [[lecture6 Vision Neural Networks.pdf#page=101|101↗]]`
+- [199] `## 7.5 ViT Classification Head：pool patch outputs 再分类 [[lecture6 Vision Neural Networks.pdf#page=102|102↗]]`
+- [200] `## 7.6 Pre-Norm Transformer：LayerNorm 放进 residual branch 前 [[lecture6 Vision Neural Networks.pdf#page=103|103↗]]`
+- [201] `## 7.7 RMSNorm：用 root mean square 替代 LayerNorm [[lecture6 Vision Neural Networks.pdf#page=105|105↗]]`
+- [202] `## 7.8 Patch Embedding Limitation：ViT 会丢掉 translation equivariance [[lecture6 Vision Neural Networks.pdf#page=106|106↗]]`
+- [203] `# 8 ConvNeXt：把 Transformer design ideas 放回 CNN [[lecture6 Vision Neural Networks.pdf#page=108|108↗]]`
+- [204] `## 8.1 Main Idea：Transformer ideas + CNN efficiency [[lecture6 Vision Neural Networks.pdf#page=108|108↗]]`
+- [205] `## 8.2 Patchify Stem：用 non-overlapping conv patch 替代传统 stem [[lecture6 Vision Neural Networks.pdf#page=109|109↗]]`
+- [206] `## 8.3 Inverted Bottleneck：先 expand 再 project back [[lecture6 Vision Neural Networks.pdf#page=110|110↗]]`
+- [207] `## 8.4 Other Improvements：GeLU、LayerNorm、独立 downsampling [[lecture6 Vision Neural Networks.pdf#page=111|111↗]]`
+- [208] `## 8.5 ConvNeXt V2：architecture + training strategy co-design [[lecture6 Vision Neural Networks.pdf#page=112|112↗]]`
+- [209] `# 9 U-Net Family：dense prediction 中的 long skip architecture [[lecture6 Vision Neural Networks.pdf#page=114|114↗]]`
+- [210] `## 9.1 U-Net Origin：少量训练图像也要精细分割 [[lecture6 Vision Neural Networks.pdf#page=114|114↗]]`
+- [211] `## 9.2 U-Net Intuition：images are multi-scale [[lecture6 Vision Neural Networks.pdf#page=115|115↗]]`
+- [212] `## 9.3 U-Net Descendants：dense prediction everywhere [[lecture6 Vision Neural Networks.pdf#page=116|116↗]]`
+
+## Part_1/L7_Image Classification and Representation Learning.md
+
+- [213] `# 1 Recognition Tasks：从图像里识别什么 [[Lecture 7.pdf#page=2|2→]]`
+- [214] `## 1.1 一张 tourist photo 可以对应很多任务 [[Lecture 7.pdf#page=2|2→]]`
+- [215] `# 2 Image Classification：固定 label set 下的核心任务 [[Lecture 7.pdf#page=14|14→]]`
+- [216] `## 2.1 Semantic Gap：像素 tensor 到语义 label 的距离 [[Lecture 7.pdf#page=15|15→]]`
+- [217] `## 2.2 Classification 的视觉挑战 [[Lecture 7.pdf#page=16|16→]]`
+- [218] `## 2.3 Supervised Learning Pipeline [[Lecture 7.pdf#page=23|23→]]`
+- [219] `# 3 Self-Supervised Learning：不用人工 label 学 representation [[Lecture 7.pdf#page=25|25→]]`
+- [220] `## 3.1 Pretext Task 和 Downstream Task [[Lecture 7.pdf#page=26|26→]]`
+- [221] `## 3.2 Inpainting：预测缺失像素 [[Lecture 7.pdf#page=30|30→]]`
+- [222] `## 3.3 MAE：大比例 mask 的重建式 self-supervised learning [[Lecture 7.pdf#page=35|35→]]`
+- [223] `## 3.4 MAE Encoder：只看 visible patches [[Lecture 7.pdf#page=38|38→]]`
+- [224] `## 3.5 MAE Decoder：只为 reconstruction 服务 [[Lecture 7.pdf#page=39|39→]]`
+- [225] `## 3.6 MAE Reconstruction Loss [[Lecture 7.pdf#page=40|40→]]`
+- [226] `# 4 Contrastive Representation Learning：拉近正样本，推远负样本 [[Lecture 7.pdf#page=46|46→]]`
+- [227] `## 4.1 General Formulation [[Lecture 7.pdf#page=47|47→]]`
+- [228] `## 4.2 InfoNCE-style Loss [[Lecture 7.pdf#page=48|48→]]`
+- [229] `## 4.3 SimCLR：augmentation 生成 positive pairs [[Lecture 7.pdf#page=49|49→]]`
+- [230] `### 4.3.1 SimCLR Training Pipeline [[Lecture 7.pdf#page=49|49→]]`
+- [231] `### 4.3.2 NT-Xent Loss：每个 view 都要找回自己的 positive [[Lecture 7.pdf#page=48|48→]]`
+- [232] `### 4.3.3 为什么 downstream 用 $h$，不是用 $z$ [[Lecture 7.pdf#page=49|49→]]`
+- [233] `## 4.4 Linear Evaluation：冻结 encoder 后训练线性分类器 [[Lecture 7.pdf#page=51|51→]]`
+- [234] `### 4.4.1 $h$ 作为 downstream feature 的三种用法 [[Lecture 7.pdf#page=51|51→]]`
+- [235] `## 4.5 MoCo：用 queue 扩大 negative samples [[Lecture 7.pdf#page=52|52→]]`
+- [236] `## 4.6 MoCo Momentum Encoder [[Lecture 7.pdf#page=53|53→]]`
+- [237] `## 4.7 MoCo v2：SimCLR + MoCo 的混合 [[Lecture 7.pdf#page=54|54→]]`
+- [238] `## 4.8 DINO：Self-Distillation with No Labels [[Lecture 7.pdf#page=55|55→]]`
+- [239] `## 4.9 DINOv2：更大数据、更强局部表示 [[Lecture 7.pdf#page=58|58→]]`
+- [240] `# 5 JEPA：在 representation space 做预测 [[Lecture 7.pdf#page=61|61→]]`
+- [241] `## 5.1 Contrastive vs Regularized Methods：不用 negatives 也要防止 collapse [[Lecture 7.pdf#page=61|61→]]`
+- [242] `## 5.2 JEA：Joint Embedding Architecture [[Lecture 7.pdf#page=62|62→]]`
+- [243] `## 5.3 JEPA：Joint Embedding Predictive Architecture [[Lecture 7.pdf#page=63|63→]]`
+- [244] `### 5.3.1 JEPA 不做 pixel reconstruction [[Lecture 7.pdf#page=63|63→]]`
+- [245] `### 5.3.2 JEA 和 JEPA 的区别 [[Lecture 7.pdf#page=62|62→]]`
+- [246] `## 5.4 Training a JEPA：prediction + information constraints [[Lecture 7.pdf#page=64|64→]]`
+- [247] `### 5.4.1 四个目标分别在防什么 [[Lecture 7.pdf#page=64|64→]]`
+- [248] `## 5.5 JEPA 和 H-JEPA 的边界 [[Lecture 7.pdf#page=65|65→]]`
+- [249] `## 5.6 Representation Collapse 和 SIGReg [[Lecture 7.pdf#page=66|66→]]`
+- [250] `# 6 Vision-Language Representation Learners [[Lecture 7.pdf#page=69|69→]]`
+- [251] `## 6.1 从 fixed label classification 到 zero-shot generalization [[Lecture 7.pdf#page=70|70→]]`
+- [252] `## 6.2 CLIP：Contrastive Language-Image Pre-training [[Lecture 7.pdf#page=76|76→]]`
+- [253] `### 6.2.1 CLIP 的训练对象是 pair，不是 class label [[Lecture 7.pdf#page=76|76→]]`
+- [254] `## 6.3 CLIP Contrastive Objective：batch 内做 image-text matching [[Lecture 7.pdf#page=78|78→]]`
+- [255] `### 6.3.1 相似度矩阵视角 [[Lecture 7.pdf#page=78|78→]]`
+- [256] `## 6.4 CLIP Zero-Shot Classification [[Lecture 7.pdf#page=80|80→]]`
+- [257] `### 6.4.1 Zero-shot classification pipeline [[Lecture 7.pdf#page=80|80→]]`
+- [258] `## 6.5 为什么 CLIP 成功：transferability + scale + simplicity [[Lecture 7.pdf#page=84|84→]]`
+- [259] `## 6.6 Modality Gap：image cone 和 text cone 没有完全重合 [[Lecture 7.pdf#page=87|87→]]`
+- [260] `## 6.7 SigLIP：用 sigmoid loss 解耦 batch size [[Lecture 7.pdf#page=90|90→]]`
+- [261] `## 6.8 CoCa：CLIP-style contrastive + captioning decoder [[Lecture 7.pdf#page=92|92→]]`
+- [262] `## 6.9 CLIP-style Models 的 limitation [[Lecture 7.pdf#page=94|94→]]`
+- [263] `# 7 Vision-Language Models：图像作为 LLM 的输入 [[Lecture 7.pdf#page=98|98→]]`
+- [264] `## 7.1 LLaVA：Large Language and Vision Assistant [[Lecture 7.pdf#page=99|99→]]`
+- [265] `## 7.2 LLaVA 的关键：把 visual information 接到 LLM [[Lecture 7.pdf#page=100|100→]]`
+- [266] `### 7.2.1 LLaVA 的模块关系 [[Lecture 7.pdf#page=101|101→]]`
+- [267] `### 7.2.2 LLaVA 两阶段训练 [[Lecture 7.pdf#page=102|102→]]`
+- [268] `## 7.3 Flamingo：用 gated cross-attention 融合视觉特征 [[Lecture 7.pdf#page=103|103→]]`
+- [269] `# 8 Look at Your Data：数据本身也会出问题 [[Lecture 7.pdf#page=108|108→]]`
+- [270] `## 8.1 Validation Data Leakage [[Lecture 7.pdf#page=109|109→]]`
+- [271] `## 8.2 Labels can be wrong [[Lecture 7.pdf#page=111|111→]]`
+- [272] `## 8.3 Classes themselves can be wrong [[Lecture 7.pdf#page=112|112→]]`
+
+## Part_1/L8_Object Detection.md
+
+- [273] `# 1 Object Detection：分类之外还要定位 [[lecture 8 object detection.pdf#page=3|3→]]`
+- [274] `# 2 Detection Approaches：三类基本思路 [[lecture 8 object detection.pdf#page=4|4→]]`
+- [275] `## 2.1 Sliding Window：把 detection 变成很多次 binary classification [[lecture 8 object detection.pdf#page=5|5→]]`
+- [276] `## 2.2 Region Proposal：先找 object-like regions，再分类 [[lecture 8 object detection.pdf#page=15|15→]]`
+- [277] `## 2.3 Implicit Shape Model：局部 patch 为 object center 投票 [[lecture 8 object detection.pdf#page=19|19→]]`
+- [278] `# 3 Evaluation：mean Average Precision (mAP) at Intersection over Union (IoU) 是检测核心指标 [[lecture 8 object detection.pdf#page=24|24→]]`
+- [279] `## 3.1 mean Average Precision (mAP) at Intersection over Union (IoU) 的三个部分 [[lecture 8 object detection.pdf#page=24|24→]]`
+- [280] `## 3.2 Precision-Recall：按 confidence 从高到低扫描 [[lecture 8 object detection.pdf#page=25|25→]]`
+- [281] `## 3.3 IoU：Intersection over Union [[lecture 8 object detection.pdf#page=27|27→]]`
+- [282] `# 4 Learn to Detect：classification + localization [[lecture 8 object detection.pdf#page=29|29→]]`
+- [283] `# 5 R-CNN Family：从 region proposals 到 learnable proposals [[lecture 8 object detection.pdf#page=31|31→]]`
+- [284] `## 5.1 R-CNN：每个 proposal 独立跑 CNN [[lecture 8 object detection.pdf#page=31|31→]]`
+- [285] `## 5.2 Fast R-CNN：先卷整图，再 crop feature [[lecture 8 object detection.pdf#page=39|39→]]`
+- [286] `## 5.3 RoI Pool：任意大小 proposal 到固定大小 feature [[lecture 8 object detection.pdf#page=45|45→]]`
+- [287] `## 5.4 Fast R-CNN 的剩余瓶颈：proposal 仍来自 CPU heuristic [[lecture 8 object detection.pdf#page=54|54→]]`
+- [288] `## 5.5 Region Proposal Network：在 feature map 上预测 anchors [[lecture 8 object detection.pdf#page=57|57→]]`
+- [289] `## 5.6 Faster R-CNN：two-stage detector [[lecture 8 object detection.pdf#page=63|63→]]`
+- [290] `# 6 Single-Stage Detectors：YOLO / SSD / RetinaNet [[lecture 8 object detection.pdf#page=67|67→]]`
+- [291] `## 6.1 YOLO：You Only Look Once [[lecture 8 object detection.pdf#page=68|68→]]`
+- [292] `## 6.2 YOLO 的 post-processing：多 box 需要去重 [[lecture 8 object detection.pdf#page=73|73→]]`
+- [293] `# 7 DETR：用 Transformer 直接预测一组 boxes [[lecture 8 object detection.pdf#page=76|76→]]`
+- [294] `## 7.1 DETR Pipeline：fixed set prediction [[lecture 8 object detection.pdf#page=77|77→]]`
+- [295] `## 7.2 Bipartite Matching：让 prediction 和 ground-truth (GT) 一对一 [[lecture 8 object detection.pdf#page=76|76→]]`
+- [296] `## 7.3 DETR 的取舍 [[lecture 8 object detection.pdf#page=81|81→]]`
+- [297] `# 8 Open-Vocabulary Detection：从固定类别到自然语言查询 [[lecture 8 object detection.pdf#page=86|86→]]`
+- [298] `## 8.1 Closed-Vocabulary Detection 的限制 [[lecture 8 object detection.pdf#page=86|86→]]`
+- [299] `## 8.2 Open-World Localization Vision Transformer (OWL-ViT)：用 text query 做 open-world localization [[lecture 8 object detection.pdf#page=87|87→]]`
+- [300] `## 8.3 OWL-ViT Stage 1：image-text contrastive pre-training [[lecture 8 object detection.pdf#page=88|88→]]`
+- [301] `## 8.4 OWL-ViT Stage 2：加 detection heads 做 fine-tuning [[lecture 8 object detection.pdf#page=89|89→]]`
+- [302] `## 8.5 LVIS 和 rare categories [[lecture 8 object detection.pdf#page=90|90→]]`
+- [303] `## 8.6 Image-Conditioned Detection：用图像 embedding 做 query [[lecture 8 object detection.pdf#page=92|92→]]`
+- [304] `## 8.7 OWLv2：用 self-training 扩大 detection supervision [[lecture 8 object detection.pdf#page=93|93→]]`
+- [305] `# 9 Grounding DINO：open-set detector with language-aware regions [[lecture 8 object detection.pdf#page=94|94→]]`
+- [306] `## 9.1 从 closed-set DINO detector 到 Grounding DINO [[lecture 8 object detection.pdf#page=96|96→]]`
+- [307] `## 9.2 Open-Set Detection 的应用 [[lecture 8 object detection.pdf#page=98|98→]]`
+- [308] `# 10 Lecture Map：从传统 detection 到 language-grounded detection`
+
+## Part_1/L9_Dense Prediction.md
+
+- [309] `# 1 Dense Prediction：从一个 label 到每个 pixel 一个输出 [[Lecture 9 Dense Prediction.pdf#page=2|2→]]`
+- [310] `## 1.1 Image Segmentation：semantic / instance / panoptic [[Lecture 9 Dense Prediction.pdf#page=3|3→]]`
+- [311] `## 1.2 Depth Estimation：每个 pixel 到 camera 的距离 [[Lecture 9 Dense Prediction.pdf#page=4|4→]]`
+- [312] `## 1.3 Image Generation：预测 clean image / noise 也是 dense prediction [[Lecture 9 Dense Prediction.pdf#page=5|5→]]`
+- [313] `# 2 Fully Convolutional Network (FCN)：把 classifier 变成 pixel-wise predictor [[Lecture 9 Dense Prediction.pdf#page=7|7→]]`
+- [314] `## 2.1 FCN 面临的两个问题：sparse, low-resolution output; top-layer features abstract but not localized [[Lecture 9 Dense Prediction.pdf#page=8|8→]]`
+- [315] `## 2.2 FCN 的 practical solution：先 downsample，再 upsample [[Lecture 9 Dense Prediction.pdf#page=9|9→]]`
+- [316] `## 2.3 Skip Fusion：高层语义和低层定位相加 [[Lecture 9 Dense Prediction.pdf#page=12|12→]]`
+- [317] `## 2.4 Semantic Segmentation Metrics：pixel accuracy 和 Intersection over Union (IoU) [[Lecture 9 Dense Prediction.pdf#page=14|14→]]`
+- [318] `# 3 Operations for Dense Prediction：upsampling 如何恢复 resolution [[Lecture 9 Dense Prediction.pdf#page=16|16→]]`
+- [319] `## 3.1 Transposed Convolution：用 filter 在 output 上 paint [[Lecture 9 Dense Prediction.pdf#page=17|17→]]`
+- [320] `## 3.2 Stride-2 Transposed Convolution：插零再卷积 [[Lecture 9 Dense Prediction.pdf#page=18|18→]]`
+- [321] `## 3.3 Max Unpooling：用 pooling switches 放回位置 [[Lecture 9 Dense Prediction.pdf#page=24|24→]]`
+- [322] `# 4 Architectures for Dense Prediction：DeconvNet / U-Net / Feature Pyramid Network [[Lecture 9 Dense Prediction.pdf#page=25|25→]]`
+- [323] `## 4.1 DeconvNet：encoder-decoder + unpooling / deconvolution [[Lecture 9 Dense Prediction.pdf#page=26|26→]]`
+- [324] `## 4.2 U-Net：concatenate skip features，最后统一预测 [[Lecture 9 Dense Prediction.pdf#page=28|28→]]`
+- [325] `## 4.3 Feature Pyramid Network (FPN)：给低层 feature 加高层 context [[Lecture 9 Dense Prediction.pdf#page=29|29→]]`
+- [326] `# 5 Instance Segmentation：Mask Region-based Convolutional Neural Network (Mask R-CNN) [[Lecture 9 Dense Prediction.pdf#page=31|31→]]`
+- [327] `## 5.1 Mask R-CNN Pipeline：class / box / mask 三个输出 [[Lecture 9 Dense Prediction.pdf#page=33|33→]]`
+- [328] `## 5.2 RoIAlign vs. RoIPool：避免 quantization error [[Lecture 9 Dense Prediction.pdf#page=34|34→]]`
+- [329] `### 5.2.1 RoIPool：把 RoI 切成 bins，然后 max pooling [[Lecture 9 Dense Prediction.pdf#page=34|34→]]`
+- [330] `### 5.2.2 RoIAlign：不取整，用 bilinear interpolation 采样 [[Lecture 9 Dense Prediction.pdf#page=35|35→]]`
+- [331] `### 5.2.3 两者的核心区别`
+- [332] `## 5.3 Keypoint Prediction 也是 dense map prediction [[Lecture 9 Dense Prediction.pdf#page=40|40→]]`
+- [333] `# 6 Interactive Segmentation：从 scribbles / points 到 promptable segmentation [[Lecture 9 Dense Prediction.pdf#page=42|42→]]`
+- [334] `## 6.1 Segment Anything Model (SAM)：promptable segmentation foundation model [[Lecture 9 Dense Prediction.pdf#page=45|45→]]`
+- [335] `## 6.2 SAM Task：Promptable Segmentation [[Lecture 9 Dense Prediction.pdf#page=47|47→]]`
+- [336] `## 6.3 SAM Model：image encoder / prompt encoder / mask decoder [[Lecture 9 Dense Prediction.pdf#page=48|48→]]`
+- [337] `## 6.4 SAM Mask Decoder：prompt-image 双向 attention [[Lecture 9 Dense Prediction.pdf#page=51|51→]]`
+- [338] `## 6.5 SAM Efficiency：heavy encoder offline，light decoder interactive [[Lecture 9 Dense Prediction.pdf#page=53|53→]]`
+- [339] `## 6.6 Model-in-the-Loop Data Engine：SA-1B 如何被构建 [[Lecture 9 Dense Prediction.pdf#page=54|54→]]`
+- [340] `## 6.7 SAM Evaluation and Limitations [[Lecture 9 Dense Prediction.pdf#page=57|57→]]`
+- [341] `## 6.8 Grounded-Segment-Anything：Grounding DINO + SAM [[Lecture 9 Dense Prediction.pdf#page=60|60→]]`
+- [342] `## 6.9 SAM 2：从 image segmentation 到 video object segmentation [[Lecture 9 Dense Prediction.pdf#page=62|62→]]`
+- [343] `# 7 Depth Estimation：从 supervised / stereo 到 Depth Anything [[Lecture 9 Dense Prediction.pdf#page=65|65→]]`
+- [344] `## 7.1 Depth Anything：labeled + unlabeled data 的 teacher/student [[Lecture 9 Dense Prediction.pdf#page=68|68→]]`
+- [345] `## 7.2 Depth Anything 为什么可能超过 teacher [[Lecture 9 Dense Prediction.pdf#page=70|70→]]`
+- [346] `## 7.3 Depth Anything 的应用：image / video editing [[Lecture 9 Dense Prediction.pdf#page=72|72→]]`
+- [347] `## 7.4 Depth Anything V2：用 synthetic data 解决 real depth label noise [[Lecture 9 Dense Prediction.pdf#page=73|73→]]`
+- [348] `## 7.5 Beyond Depth Anything：从 single-image depth 到 view-consistent geometry [[Lecture 9 Dense Prediction.pdf#page=78|78→]]`
+- [349] `## 7.6 Depth Anything 3：depth + ray + camera pose [[Lecture 9 Dense Prediction.pdf#page=79|79→]]`
+- [350] `# 8 Generation as Dense Prediction：GAN / Pix2Pix / Diffusion [[Lecture 9 Dense Prediction.pdf#page=80|80→]]`
+- [351] `## 8.1 GAN / cGAN：Generator 和 Discriminator 的 two-player game [[Lecture 9 Dense Prediction.pdf#page=82|82→]]`
+- [352] `## 8.2 Training Dynamics and Nash Equilibrium [[Lecture 9 Dense Prediction.pdf#page=85|85→]]`
+- [353] `## 8.3 Pix2Pix：paired image-to-image translation [[Lecture 9 Dense Prediction.pdf#page=86|86→]]`
+- [354] `## 8.4 Pix2Pix Generator：U-Net 再次出现 [[Lecture 9 Dense Prediction.pdf#page=88|88→]]`
+- [355] `## 8.5 PatchGAN：Discriminator 也可以是 dense predictor [[Lecture 9 Dense Prediction.pdf#page=89|89→]]`
+- [356] `## 8.6 Denoising Diffusion Probabilistic Model (DDPM)：逐步预测 noise [[Lecture 9 Dense Prediction.pdf#page=90|90→]]`
+- [357] `## 8.7 Latent Diffusion Model (LDM)：在 latent space 做 dense prediction [[Lecture 9 Dense Prediction.pdf#page=92|92→]]`
+- [358] `## 8.8 Diffusion Transformer (DiT)：用 Vision Transformer 做 denoiser [[Lecture 9 Dense Prediction.pdf#page=95|95→]]`
+- [359] `# 9 Lecture Map：Dense Prediction 的统一主线 [[Lecture 9 Dense Prediction.pdf#page=6|6→]]`
+
+## Part_1/L10_Synthetic Data.md
+
+- [360] `# 1 Synthetic Data for Visual Perception：用可控世界生成难以人工标注的监督 [[Lecture10 Synthetic Data.pdf#page=3|3→]]`
+- [361] `## 1.1 Historical Evolution：从 toy examples 到 standard pre-training [[Lecture10 Synthetic Data.pdf#page=4|4→]]`
+- [362] `## 1.2 How Synthetic Data is Generated：三条路线 [[Lecture10 Synthetic Data.pdf#page=5|5→]]`
+- [363] `## 1.3 Domain Gap：synthetic accuracy 高不等于 real accuracy [[Lecture10 Synthetic Data.pdf#page=6|6→]]`
+- [364] `## 1.4 Standard Paradigm：Synthetic $\rightarrow$ Real [[Lecture10 Synthetic Data.pdf#page=7|7→]]`
+- [365] `## 1.5 Representative Synthetic Datasets and Generators [[Lecture10 Synthetic Data.pdf#page=8|8→]]`
+- [366] `### 1.5.1 FlyingThings / MPI Sintel / Monkaa：optical flow and scene flow [[Lecture10 Synthetic Data.pdf#page=8|8→]]`
+- [367] `### 1.5.2 Kubric：object-centric procedural video generator [[Lecture10 Synthetic Data.pdf#page=13|13→]]`
+- [368] `### 1.5.3 Hypersim / Replica：photorealistic indoor geometry [[Lecture10 Synthetic Data.pdf#page=16|16→]]`
+- [369] `### 1.5.4 GTA5 / AI2-THOR：game engine and interactive simulation [[Lecture10 Synthetic Data.pdf#page=22|22→]]`
+- [370] `## 1.6 Key Messages of Synthetic Data [[Lecture10 Synthetic Data.pdf#page=25|25→]]`
+- [371] `# 2 Synthetic Data for Point Tracking：长期轨迹和 occlusion 几乎只能合成监督 [[Lecture10 Synthetic Data.pdf#page=27|27→]]`
+- [372] `## 2.1 Why Tracking Needs Synthetic Data [[Lecture10 Synthetic Data.pdf#page=28|28→]]`
+- [373] `## 2.2 Synthetic-to-Real Pipeline in Tracking [[Lecture10 Synthetic Data.pdf#page=29|29→]]`
+- [374] `## 2.3 Persistent Independent Particles (PIPs)：Tracking Any Point with Synthetic Pre-training [[Lecture10 Synthetic Data.pdf#page=30|30→]]`
+- [375] `## 2.4 Tracking Any Point Video (TAP-Vid)-Kubric：专门为 long-term tracking 设计的数据 [[Lecture10 Synthetic Data.pdf#page=31|31→]]`
+- [376] `## 2.5 TAP-Net and TAPIR：从 per-frame matching 到 unified refinement [[Lecture10 Synthetic Data.pdf#page=32|32→]]`
+- [377] `## 2.6 CoTracker：joint tracking and cross-track attention [[Lecture10 Synthetic Data.pdf#page=38|38→]]`
+- [378] `## 2.7 TAPTR：把 point tracking 看成 detection [[Lecture10 Synthetic Data.pdf#page=39|39→]]`
+- [379] `## 2.8 BootsTAPIR：用 15M real videos 做 teacher-student self-training [[Lecture10 Synthetic Data.pdf#page=40|40→]]`
+- [380] `## 2.9 CoTracker3：better pseudo-labels beat more data [[Lecture10 Synthetic Data.pdf#page=41|41→]]`
+- [381] `## 2.10 Track-On-R：verifier-guided pseudo-labeling [[Lecture10 Synthetic Data.pdf#page=46|46→]]`
+- [382] `## 2.11 Key Takeaways for Point Tracking [[Lecture10 Synthetic Data.pdf#page=48|48→]]`
+- [383] `# 3 Synthetic Data for 6-DoF Pose Estimation：从 CAD rendering 到 few-shot RGB-D matching [[Lecture10 Synthetic Data.pdf#page=50|50→]]`
+- [384] `## 3.1 Model-Based 6-DoF Pose Estimation [[Lecture10 Synthetic Data.pdf#page=50|50→]]`
+- [385] `## 3.2 Model-Free 6-DoF Pose Estimation [[Lecture10 Synthetic Data.pdf#page=51|51→]]`
+- [386] `## 3.3 Few-Shot 6D Pose Estimation (FS6D)：few-shot 6D pose with ShapeNet6D，A specific realization of MF6D[[Lecture10 Synthetic Data.pdf#page=52|52→]]`
+- [387] `## 3.4 FS6D Online Data Augmentation：texture blending + deformation [[Lecture10 Synthetic Data.pdf#page=55|55→]]`
+- [388] `## 3.5 MegaPose：render & compare with synthetic data [[Lecture10 Synthetic Data.pdf#page=57|57→]]`
+- [389] `## 3.6 FoundationPose：pure synthetic training 的 unified framework [[Lecture10 Synthetic Data.pdf#page=59|59→]]`
+- [390] `### 3.6.1 Average Distance of Model Points (ADD) and ADD-S Metrics [[Lecture10 Synthetic Data.pdf#page=62|62→]]`
+- [391] `## 3.7 Key Takeaways for Pose Estimation [[Lecture10 Synthetic Data.pdf#page=64|64→]]`
+- [392] `# 4 Synthetic Data for Depth Estimation：从 synthetic depth 到 any-camera 和真实传感器 [[Lecture10 Synthetic Data.pdf#page=66|66→]]`
+- [393] `## 4.1 Marigold：Stable Diffusion fine-tuned for depth [[Lecture10 Synthetic Data.pdf#page=67|67→]]`
+- [394] `## 4.2 Depth Any Camera (DAC)：generalizing depth model to any camera [[Lecture10 Synthetic Data.pdf#page=69|69→]]`
+- [395] `## 4.3 What is ERP? [[Lecture10 Synthetic Data.pdf#page=71|71→]]`
+- [396] `## 4.4 Camera Depth Models：sim-to-real gap in depth sensors [[Lecture10 Synthetic Data.pdf#page=72|72→]]`
+- [397] `## 4.5 CDM Architecture and Training [[Lecture10 Synthetic Data.pdf#page=73|73→]]`
+- [398] `# 5 Synthetic Data for Surface Normal Estimation：从 dense normal GT 到 geometry-aware priors [[Lecture10 Synthetic Data.pdf#page=76|76→]]`
+- [399] `## 5.1 Omnidata：从 3D scans 自动生成 mid-level cues [[Lecture10 Synthetic Data.pdf#page=79|79→]]`
+- [400] `## 5.2 Omnidata 的限制：scale 大，但 inductive bias 不一定够 [[Lecture10 Synthetic Data.pdf#page=82|82→]]`
+- [401] `## 5.3 DSINE：用 ray direction 和 local normal rotation 替代盲目堆数据 [[Lecture10 Synthetic Data.pdf#page=83|83→]]`
+- [402] `### 5.3.1 Ray Direction Encoding：把 camera intrinsics 显式喂给网络 [[Lecture10 Synthetic Data.pdf#page=84|84→]]`
+- [403] `### 5.3.2 Ray ReLU：把 normal 限制在 visible hemisphere [[Lecture10 Synthetic Data.pdf#page=85|85→]]`
+- [404] `### 5.3.3 Rotation Between Normals：把 local geometry 写成旋转关系 [[Lecture10 Synthetic Data.pdf#page=86|86→]]`
+- [405] `### 5.3.4 DSINE 具体预测什么 [[Lecture10 Synthetic Data.pdf#page=88|88→]]`
+- [406] `### 5.3.5 Iterative Refinement：旋转、可见性裁剪、加权融合 [[Lecture10 Synthetic Data.pdf#page=89|89→]]`
+- [407] `## 5.4 Marigold for Normal Estimation：diffusion prior 也可以预测 normal [[Lecture10 Synthetic Data.pdf#page=90|90→]]`
+- [408] `## 5.5 StableNormal：让 diffusion normal estimation 更稳定 [[Lecture10 Synthetic Data.pdf#page=91|91→]]`
+- [409] `## 5.6 StableNormal Method：YOSO initialization + SG-DRN refinement [[Lecture10 Synthetic Data.pdf#page=92|92→]]`
+- [410] `## 5.7 StableNormal Results：更低 variance，更快 inference [[Lecture10 Synthetic Data.pdf#page=93|93→]]`
+- [411] `## 5.8 Key Insight：right inductive bias can replace orders of magnitude of data [[Lecture10 Synthetic Data.pdf#page=94|94→]]`
+
+## Part_1/L11_Curating Vision-Language Data from the Web.md
+
+- [412] `# 1 Vision-Language Data：从网页 alt-text 到 multimodal pre-training [[Lecture 11 curating data for VLM.pdf#page=3|3→]]`
+- [413] `## 1.1 Alt-Text Spectrum：good, bad, mismatched [[Lecture 11 curating data for VLM.pdf#page=4|4→]]`
+- [414] `## 1.2 Why Scale Matters：dataset 越来越大，performance 也上升 [[Lecture 11 curating data for VLM.pdf#page=8|8→]]`
+- [415] `## 1.3 Use Cases：generation, Vision-Language Model (VLM), Vision-Language-Action (VLA) [[Lecture 11 curating data for VLM.pdf#page=9|9→]]`
+- [416] `## 1.4 Web Data Pipeline and Core Challenge [[Lecture 11 curating data for VLM.pdf#page=12|12→]]`
+- [417] `# 2 Text-Side Filtering：用语言概念筛选 alt-text [[Lecture 11 curating data for VLM.pdf#page=15|15→]]`
+- [418] `## 2.1 General Method：vocabulary, matching, balancing [[Lecture 11 curating data for VLM.pdf#page=16|16→]]`
+- [419] `## 2.2 WebImageText (WIT)：Contrastive Language-Image Pre-training (CLIP) 背后的 mystery dataset [[Lecture 11 curating data for VLM.pdf#page=18|18→]]`
+- [420] `## 2.3 WebImageText (WIT) vs. Yahoo Flickr Creative Commons 100 Million (YFCC100M)：WebImageText 的优势主要来自 scale [[Lecture 11 curating data for VLM.pdf#page=22|22→]]`
+- [421] `## 2.4 Metadata-Curated Contrastive Language-Image Pre-training (MetaCLIP)：Demystifying Contrastive Language-Image Pre-training (CLIP) Data [[Lecture 11 curating data for VLM.pdf#page=23|23→]]`
+- [422] `## 2.5 Metadata-Curated Contrastive Language-Image Pre-training (MetaCLIP) Balancing：为什么 cap 是 $20,000$ [[Lecture 11 curating data for VLM.pdf#page=26|26→]]`
+- [423] `## 2.6 Metadata-Curated Contrastive Language-Image Pre-training (MetaCLIP) Results [[Lecture 11 curating data for VLM.pdf#page=27|27→]]`
+- [424] `# 3 Image-Text Alignment Verification：从 tags 到 learned scores [[Lecture 11 curating data for VLM.pdf#page=30|30→]]`
+- [425] `## 3.1 Filtering Paradox：过滤掉的不只是 noise，还有 diversity [[Lecture 11 curating data for VLM.pdf#page=33|33→]]`
+- [426] `## 3.2 Conceptual Captions 3M (CC3M)：早期 image-text verification [[Lecture 11 curating data for VLM.pdf#page=34|34→]]`
+- [427] `## 3.3 Conceptual Captions 12M (CC12M)：放松 filter，扩大 long-tail [[Lecture 11 curating data for VLM.pdf#page=38|38→]]`
+- [428] `## 3.4 Large-scale Artificial Intelligence Open Network (LAION)：用 Contrastive Language-Image Pre-training (CLIP) 自己过滤 web-scale data [[Lecture 11 curating data for VLM.pdf#page=42|42→]]`
+- [429] `## 3.5 Large-scale Artificial Intelligence Open Network (LAION) 的问题：democratized dataset, not filtering model [[Lecture 11 curating data for VLM.pdf#page=46|46→]]`
+- [430] `## 3.6 DataComp：把 filtering 变成 fair benchmark [[Lecture 11 curating data for VLM.pdf#page=48|48→]]`
+- [431] `## 3.7 DataComp Findings：filtering beats no filtering, but threshold matters [[Lecture 11 curating data for VLM.pdf#page=50|50→]]`
+- [432] `## 3.8 Data Filtering Networks (DFN)：专门训练 filtering model [[Lecture 11 curating data for VLM.pdf#page=53|53→]]`
+- [433] `## 3.9 Data Filtering Networks (DFN) Core Discovery：filtering quality $\ne$ ImageNet accuracy [[Lecture 11 curating data for VLM.pdf#page=55|55→]]`
+- [434] `## 3.10 Data Filtering Networks (DFN) Poisoning Insight：filter training data quality 极其敏感 [[Lecture 11 curating data for VLM.pdf#page=58|58→]]`
+- [435] `## 3.11 Data Filtering Networks (DFN) Results：DFN-2B and DFN-5B [[Lecture 11 curating data for VLM.pdf#page=59|59→]]`
+- [436] `# 4 Rethink：Embracing Noise at Scale [[Lecture 11 curating data for VLM.pdf#page=62|62→]]`
+- [437] `## 4.1 Scale Dilutes Random Noise, but Amplifies Systematic Bias [[Lecture 11 curating data for VLM.pdf#page=64|64→]]`
+- [438] `## 4.2 A Large-scale ImaGe and Noisy-text Embedding (ALIGN)：Noisy Web Text is Good Enough at Scale [[Lecture 11 curating data for VLM.pdf#page=65|65→]]`
+- [439] `## 4.3 A Large-scale ImaGe and Noisy-text Embedding (ALIGN) Results：scale beats clean small data [[Lecture 11 curating data for VLM.pdf#page=67|67→]]`
+- [440] `## 4.4 No Filter：Filtering is Bias [[Lecture 11 curating data for VLM.pdf#page=70|70→]]`
+- [441] `## 4.5 Dollar Street：income-stratified visual benchmark [[Lecture 11 curating data for VLM.pdf#page=72|72→]]`
+- [442] `## 4.6 Geographically Diverse Evaluation (GeoDE), Multicultural Reasoning over Vision and Language (MaRVL), and Global Fine-Tuning Recipe [[Lecture 11 curating data for VLM.pdf#page=74|74→]]`
+- [443] `## 4.7 Quality Filtering Makes Diversity Worse [[Lecture 11 curating data for VLM.pdf#page=76|76→]]`
+- [444] `## 4.8 Summary of Rethink [[Lecture 11 curating data for VLM.pdf#page=78|78→]]`
+- [445] `# 5 Web Language Image 100B (WebLI-100B)：三条路线在 100B scale 汇合 [[Lecture 11 curating data for VLM.pdf#page=80|80→]]`
+- [446] `## 5.1 Three Regimes at Scale [[Lecture 11 curating data for VLM.pdf#page=81|81→]]`
+- [447] `## 5.2 Engineering and Training Setup [[Lecture 11 curating data for VLM.pdf#page=82|82→]]`
+- [448] `## 5.3 Western Benchmarks Saturate [[Lecture 11 curating data for VLM.pdf#page=84|84→]]`
+- [449] `## 5.4 Cultural Diversity Gains at 100B [[Lecture 11 curating data for VLM.pdf#page=85|85→]]`
+- [450] `## 5.5 Multilinguality：low-resource languages benefit more [[Lecture 11 curating data for VLM.pdf#page=86|86→]]`
+- [451] `## 5.6 Fairness：stereotypes 不会随 scale 自动消失 [[Lecture 11 curating data for VLM.pdf#page=88|88→]]`
+- [452] `## 5.7 Web Language Image 100B (WebLI-100B) as Convergence [[Lecture 11 curating data for VLM.pdf#page=90|90→]]`
+- [453] `# 6 Synthesis：三种 curation paradigm 和不可避免的三角权衡 [[Lecture 11 curating data for VLM.pdf#page=92|92→]]`
+- [454] `## 6.1 Inevitable Triangle [[Lecture 11 curating data for VLM.pdf#page=93|93→]]`
+- [455] `### 6.1.1 Quality vs. Scale`
+- [456] `### 6.1.2 Precision vs. Diversity`
+- [457] `### 6.1.3 Filter Bias vs. Raw Data Bias`
+- [458] `## 6.2 Five Key Takeaways [[Lecture 11 curating data for VLM.pdf#page=94|94→]]`
+
+## Part_1/L12_Image Generation and Diffusion Models.md
+
+- [459] `# 1 Image Generation as Density Modeling：从 $p(x)$ 到可采样图像分布 [[Lecture 12 Image Generation - Diffusion.pdf#page=4|4→]]`
+- [460] `## 1.1 Energy-Based Model (EBM) and Metropolis-Hastings Sampling [[Lecture 12 Image Generation - Diffusion.pdf#page=5|5→]]`
+- [461] `## 1.2 Langevin Dynamics and Score Function [[Lecture 12 Image Generation - Diffusion.pdf#page=6|6→]]`
+- [462] `# 2 Score Matching：直接学习 density 的梯度场 [[Lecture 12 Image Generation - Diffusion.pdf#page=8|8→]]`
+- [463] `## 2.1 Denoising Score Matching (DSM)：把 score 学习变成 denoising [[Lecture 12 Image Generation - Diffusion.pdf#page=9|9→]]`
+- [464] `### 2.1.1 Gaussian Kernel`
+- [465] `### 2.1.2 Conditional Score to Marginal Score`
+- [466] `## 2.2 Noise Conditional Score Network (NCSN)：多噪声尺度的 score network [[Lecture 12 Image Generation - Diffusion.pdf#page=10|10→]]`
+- [467] `## 2.3 Annealed Langevin Dynamics：从粗到细采样 [[Lecture 12 Image Generation - Diffusion.pdf#page=11|11→]]`
+- [468] `# 3 Denoising Diffusion Probabilistic Model (DDPM)：从 ELBO 到 noise prediction [[Lecture 12 Image Generation - Diffusion.pdf#page=14|14→]]`
+- [469] `## 3.1 Forward Transition：逐步加 Gaussian noise [[Lecture 12 Image Generation - Diffusion.pdf#page=15|15→]]`
+- [470] `## 3.2 Closed-Form Marginal and Reparameterization [[Lecture 12 Image Generation - Diffusion.pdf#page=16|16→]]`
+- [471] `## 3.3 Reverse Process：学习去噪 Gaussian transition [[Lecture 12 Image Generation - Diffusion.pdf#page=18|18→]]`
+- [472] `## 3.4 ELBO Decomposition：三个 loss 组件 [[Lecture 12 Image Generation - Diffusion.pdf#page=19|19→]]`
+- [473] `## 3.5 From ELBO to Regression：Gaussian KL 变成 mean squared error [[Lecture 12 Image Generation - Diffusion.pdf#page=21|21→]]`
+- [474] `## 3.6 Posterior Mean Derivation：$\tilde{\mu}_t$ 的闭式表达 [[Lecture 12 Image Generation - Diffusion.pdf#page=22|22→]]`
+- [475] `## 3.7 Noise Prediction Parameterization [[Lecture 12 Image Generation - Diffusion.pdf#page=23|23→]]`
+- [476] `## 3.8 Simplified DDPM Objective [[Lecture 12 Image Generation - Diffusion.pdf#page=24|24→]]`
+- [477] `# 4 SDE and Probability-Flow ODE：统一 DDPM、Score SDE 和 Flow View [[Lecture 12 Image Generation - Diffusion.pdf#page=27|27→]]`
+- [478] `## 4.1 Probability-Flow ODE (PF-ODE) [[Lecture 12 Image Generation - Diffusion.pdf#page=28|28→]]`
+- [479] `## 4.2 Historical Takeaway：modern diffusion 的三条线汇合 [[Lecture 12 Image Generation - Diffusion.pdf#page=29|29→]]`
+- [480] `# 5 Gaussian Path and Normalization：用一个路径写下 diffusion / flow [[Lecture 12 Image Generation - Diffusion.pdf#page=32|32→]]`
+- [481] `## 5.1 Three Famous Forward Processes [[Lecture 12 Image Generation - Diffusion.pdf#page=33|33→]]`
+- [482] `## 5.2 Normalization Removes the Difference [[Lecture 12 Image Generation - Diffusion.pdf#page=34|34→]]`
+- [483] `## 5.3 Worked Normalization Examples [[Lecture 12 Image Generation - Diffusion.pdf#page=35|35→]]`
+- [484] `## 5.4 Forward Processes in One View [[Lecture 12 Image Generation - Diffusion.pdf#page=36|36→]]`
+- [485] `# 6 Five Equivalent Quantities：prediction target 的代数等价 [[Lecture 12 Image Generation - Diffusion.pdf#page=37|37→]]`
+- [486] `## 6.1 Per-Sample Targets and Conditional Expectations [[Lecture 12 Image Generation - Diffusion.pdf#page=39|39→]]`
+- [487] `## 6.2 Noise and Clean Data Conversion [[Lecture 12 Image Generation - Diffusion.pdf#page=41|41→]]`
+- [488] `## 6.3 Score as Conditional Score Expectation [[Lecture 12 Image Generation - Diffusion.pdf#page=42|42→]]`
+- [489] `### 6.3.1 Why Marginal Score Is a Posterior Expectation [[Lecture 12 Image Generation - Diffusion.pdf#page=43|43→]]`
+- [490] `## 6.4 Velocity: Path Derivative [[Lecture 12 Image Generation - Diffusion.pdf#page=44|44→]]`
+- [491] `## 6.5 Denoiser as the Bridge [[Lecture 12 Image Generation - Diffusion.pdf#page=45|45→]]`
+- [492] `## 6.6 PF-Velocity from Fokker-Planck Equation [[Lecture 12 Image Generation - Diffusion.pdf#page=46|46→]]`
+- [493] `## 6.7 PF-ODE Velocity Equals Flow Matching [[Lecture 12 Image Generation - Diffusion.pdf#page=47|47→]]`
+- [494] `## 6.8 The Big Equivalence [[Lecture 12 Image Generation - Diffusion.pdf#page=50|50→]]`
+- [495] `## 6.9 Sampling Loop [[Lecture 12 Image Generation - Diffusion.pdf#page=51|51→]]`
+- [496] `# 7 Loss Objectives, Weighting, and Schedules：从 ELBO 到 log-SNR 坐标 [[Lecture 12 Image Generation - Diffusion.pdf#page=54|54→]]`
+- [497] `## 7.1 x-Prediction Parameterization [[Lecture 12 Image Generation - Diffusion.pdf#page=55|55→]]`
+- [498] `## 7.2 The Weight Is the SNR Drop [[Lecture 12 Image Generation - Diffusion.pdf#page=56|56→]]`
+- [499] `## 7.3 Continuous-Time SNR Loss [[Lecture 12 Image Generation - Diffusion.pdf#page=57|57→]]`
+- [500] `## 7.4 Change Variables from Time to SNR [[Lecture 12 Image Generation - Diffusion.pdf#page=59|59→]]`
+- [501] `## 7.5 epsilon-Prediction Is Not Uniform in SNR [[Lecture 12 Image Generation - Diffusion.pdf#page=60|60→]]`
+- [502] `## 7.6 Log-SNR Makes epsilon-Prediction Uniform [[Lecture 12 Image Generation - Diffusion.pdf#page=61|61→]]`
+- [503] `## 7.7 General Weighted Diffusion Objective [[Lecture 12 Image Generation - Diffusion.pdf#page=62|62→]]`
+- [504] `## 7.8 Target Integral and Monte Carlo [[Lecture 12 Image Generation - Diffusion.pdf#page=63|63→]]`
+- [505] `## 7.9 Four Design Choices [[Lecture 12 Image Generation - Diffusion.pdf#page=64|64→]]`
+- [506] `## 7.10 Weighting vs Schedule and Optimal Proposal [[Lecture 12 Image Generation - Diffusion.pdf#page=65|65→]]`
+- [507] `## 7.11 Training Loop [[Lecture 12 Image Generation - Diffusion.pdf#page=67|67→]]`
+- [508] `## 7.12 Are Weighting Schemes Just Heuristics? [[Lecture 12 Image Generation - Diffusion.pdf#page=68|68→]]`
+- [509] `## 7.13 Truncated ELBO as Augmented-Data ELBO [[Lecture 12 Image Generation - Diffusion.pdf#page=69|69→]]`
+- [510] `## 7.14 Monotone Weighting as Mixture of Augmented-Data ELBOs [[Lecture 12 Image Generation - Diffusion.pdf#page=70|70→]]`
+- [511] `## 7.15 Practical Interpretation [[Lecture 12 Image Generation - Diffusion.pdf#page=71|71→]]`
+- [512] `# 8 Lecture Map：这讲的最短记忆版 [[Lecture 12 Image Generation - Diffusion.pdf#page=2|2→]]`
+
+## Part_1/L13_Image Generation - Beyond Diffusion.md
+
+- [513] `# 1 Non-Diffusion Image Generation Paradigms：四种 diffusion 之外的生成路线 [[lecture 13 image generation - beyond diffusion.pdf#page=3|3→]]`
+- [514] `# 2 Normalizing Flow (NF)：用可逆变换连接 image space 和 latent space [[lecture 13 image generation - beyond diffusion.pdf#page=5|5→]]`
+- [515] `## 2.1 Explicit Density Model 的动机：不只要“看起来像” [[lecture 13 image generation - beyond diffusion.pdf#page=6|6→]]`
+- [516] `## 2.2 Data Space、Latent Space 和 Invertible Mapping [[lecture 13 image generation - beyond diffusion.pdf#page=7|7→]]`
+- [517] `## 2.3 Change of Variables：Flow 的核心 likelihood 公式 [[lecture 13 image generation - beyond diffusion.pdf#page=8|8→]]`
+- [518] `## 2.4 Maximum Likelihood Objective 和 Layer-wise Log-Det [[lecture 13 image generation - beyond diffusion.pdf#page=9|9→]]`
+- [519] `## 2.5 Jacobian Bottleneck：为什么 Flow architecture 被强约束 [[lecture 13 image generation - beyond diffusion.pdf#page=10|10→]]`
+- [520] `## 2.6 Triangular Jacobian：把 determinant 变成 diagonal sum [[lecture 13 image generation - beyond diffusion.pdf#page=11|11→]]`
+- [521] `## 2.7 Non-linear Independent Components Estimation (NICE)：additive coupling [[lecture 13 image generation - beyond diffusion.pdf#page=12|12→]]`
+- [522] `### 2.7.1 NICE 的 triangular Jacobian 和 volume-preserving 性质 [[lecture 13 image generation - beyond diffusion.pdf#page=13|13→]]`
+- [523] `## 2.8 Real-valued Non-Volume Preserving (RealNVP)：affine coupling [[lecture 13 image generation - beyond diffusion.pdf#page=15|15→]]`
+- [524] `### 2.8.1 RealNVP Image Architecture：mask、squeeze 和 multi-scale [[lecture 13 image generation - beyond diffusion.pdf#page=16|16→]]`
+- [525] `### 2.8.2 RealNVP 的优点和 coupling limitation [[lecture 13 image generation - beyond diffusion.pdf#page=17|17→]]`
+- [526] `## 2.9 Flow 的关键性质和主要限制 [[lecture 13 image generation - beyond diffusion.pdf#page=19|19→]]`
+- [527] `## 2.10 Transformer-based Masked Autoregressive Flow (TarFlow)：用 Transformer conditioner 复兴 Flow [[lecture 13 image generation - beyond diffusion.pdf#page=21|21→]]`
+- [528] `### 2.10.1 TarFlow Formulation：patch autoregressive flow [[lecture 13 image generation - beyond diffusion.pdf#page=22|22→]]`
+- [529] `### 2.10.2 TarFlow Trick 1 & 2：noise augmentation 和 post-training denoising [[lecture 13 image generation - beyond diffusion.pdf#page=23|23→]]`
+- [530] `### 2.10.3 TarFlow Trick 3：conditional 和 unconditional guidance [[lecture 13 image generation - beyond diffusion.pdf#page=24|24→]]`
+- [531] `## 2.11 Flow Design Checklist 和 Part I 总结 [[lecture 13 image generation - beyond diffusion.pdf#page=26|26→]]`
+- [532] `# 3 Generative Adversarial Network (GAN)：从 density modeling 到 adversarial game [[lecture 13 image generation - beyond diffusion.pdf#page=29|29→]]`
+- [533] `## 3.1 Implicit Generative Model 的动机 [[lecture 13 image generation - beyond diffusion.pdf#page=30|30→]]`
+- [534] `## 3.2 Generator 和 Discriminator 的基本框架 [[lecture 13 image generation - beyond diffusion.pdf#page=31|31→]]`
+- [535] `## 3.3 Original GAN Objective：minimax game [[lecture 13 image generation - beyond diffusion.pdf#page=32|32→]]`
+- [536] `### 3.3.1 Gradient Saturation：为什么 $\log(1-D)$ 早期会消失 [[lecture 13 image generation - beyond diffusion.pdf#page=33|33→]]`
+- [537] `## 3.4 Optimal Discriminator 和 Jensen-Shannon Divergence (JSD) [[lecture 13 image generation - beyond diffusion.pdf#page=34|34→]]`
+- [538] `## 3.5 Non-Overlapping Support 和 unstable gradients [[lecture 13 image generation - beyond diffusion.pdf#page=35|35→]]`
+- [539] `## 3.6 Wasserstein Generative Adversarial Network (WGAN)：Earth-Mover Intuition [[lecture 13 image generation - beyond diffusion.pdf#page=36|36→]]`
+- [540] `### 3.6.1 为什么 Wasserstein 在 non-overlap 时有连续梯度 [[lecture 13 image generation - beyond diffusion.pdf#page=38|38→]]`
+- [541] `### 3.6.2 Kantorovich-Rubinstein (KR) Duality 和 1-Lipschitz Critic [[lecture 13 image generation - beyond diffusion.pdf#page=39|39→]]`
+- [542] `## 3.7 Mode Collapse：高质量不等于高覆盖 [[lecture 13 image generation - beyond diffusion.pdf#page=40|40→]]`
+- [543] `## 3.8 Relativistic Pairing Generative Adversarial Network (RpGAN)：pairing real and fake [[lecture 13 image generation - beyond diffusion.pdf#page=41|41→]]`
+- [544] `## 3.9 R3GAN：用 gradient penalty 稳定 RpGAN [[lecture 13 image generation - beyond diffusion.pdf#page=42|42→]]`
+- [545] `## 3.10 Adversarial Diffusion Distillation (ADD)：GAN idea 迁移到 diffusion distillation [[lecture 13 image generation - beyond diffusion.pdf#page=45|45→]]`
+- [546] `## 3.11 GAN-Based Methods 的优点、限制和 Part II 总结 [[lecture 13 image generation - beyond diffusion.pdf#page=47|47→]]`
+- [547] `# 4 Autoregressive Model (AR)：把图像生成写成 conditional prediction [[lecture 13 image generation - beyond diffusion.pdf#page=50|50→]]`
+- [548] `## 4.1 AR Factorization：chain decomposition 和 ordering [[lecture 13 image generation - beyond diffusion.pdf#page=51|51→]]`
+- [549] `## 4.2 Recurrent Image Density Estimator (RIDE)：spatial LSTM for pixel generation [[lecture 13 image generation - beyond diffusion.pdf#page=52|52→]]`
+- [550] `## 4.3 Teacher Forcing 的优势被 recurrence 阻塞 [[lecture 13 image generation - beyond diffusion.pdf#page=53|53→]]`
+- [551] `## 4.4 Pixel Convolutional Neural Network (PixelCNN)：masked convolution [[lecture 13 image generation - beyond diffusion.pdf#page=54|54→]]`
+- [552] `### 4.4.1 Pixel Recurrent Neural Network (PixelRNN) 和 PixelCNN 的关系 [[lecture 13 image generation - beyond diffusion.pdf#page=55|55→]]`
+- [553] `### 4.4.2 Pixel-level Bottleneck [[lecture 13 image generation - beyond diffusion.pdf#page=57|57→]]`
+- [554] `## 4.5 Vector Quantized Variational Autoencoder (VQ-VAE)：用 discrete latents 压缩 image sequence [[lecture 13 image generation - beyond diffusion.pdf#page=58|58→]]`
+- [555] `### 4.5.1 VQ-VAE Training Losses：three terms 和 straight-through estimator [[lecture 13 image generation - beyond diffusion.pdf#page=60|60→]]`
+- [556] `## 4.6 VQ-VAE + AR Prior：image-as-language modeling [[lecture 13 image generation - beyond diffusion.pdf#page=61|61→]]`
+- [557] `## 4.7 JetFormer：flow soft tokens + decoder-only AR Transformer [[lecture 13 image generation - beyond diffusion.pdf#page=62|62→]]`
+- [558] `### 4.7.1 JetFormer Overview [[lecture 13 image generation - beyond diffusion.pdf#page=63|63→]]`
+- [559] `### 4.7.2 JetFormer Flow Soft Tokens：连续且可逆的 representation [[lecture 13 image generation - beyond diffusion.pdf#page=64|64→]]`
+- [560] `### 4.7.3 JetFormer AR Head：continuous distribution prediction [[lecture 13 image generation - beyond diffusion.pdf#page=65|65→]]`
+- [561] `### 4.7.4 JetFormer 的优点和限制 [[lecture 13 image generation - beyond diffusion.pdf#page=66|66→]]`
+- [562] `## 4.8 AR Representative Works 的演化 [[lecture 13 image generation - beyond diffusion.pdf#page=67|67→]]`
+- [563] `# 5 Flexible-Order Autoregressive Generation：打破 fixed raster order [[lecture 13 image generation - beyond diffusion.pdf#page=70|70→]]`
+- [564] `## 5.1 Masked Generative Image Transformer (MaskGIT)：architecture [[lecture 13 image generation - beyond diffusion.pdf#page=72|72→]]`
+- [565] `## 5.2 MaskGIT Training：Masked Visual Token Modeling (MVTM) [[lecture 13 image generation - beyond diffusion.pdf#page=73|73→]]`
+- [566] `## 5.3 MaskGIT Iterative Parallel Decoding [[lecture 13 image generation - beyond diffusion.pdf#page=74|74→]]`
+- [567] `## 5.4 MaskGIT Applications：editing、inpainting 和 outpainting [[lecture 13 image generation - beyond diffusion.pdf#page=75|75→]]`
+- [568] `## 5.5 MaskGIT 的限制：bidirectional attention 不能用 KV-cache [[lecture 13 image generation - beyond diffusion.pdf#page=76|76→]]`
+- [569] `## 5.6 Random-Order Autoregressive Image Generation (RandAR)：position instruction token [[lecture 13 image generation - beyond diffusion.pdf#page=77|77→]]`
+- [570] `## 5.7 RandAR Parallel Decoding with KV-Cache [[lecture 13 image generation - beyond diffusion.pdf#page=79|79→]]`
+- [571] `## 5.8 RandAR Zero-Shot Capabilities [[lecture 13 image generation - beyond diffusion.pdf#page=80|80→]]`
+- [572] `# 6 Lecture Takeaways：Beyond Diffusion 的统一视角 [[lecture 13 image generation - beyond diffusion.pdf#page=3|3→]]`
+
+## Part_1/Simple_Yolo.md
+
+- [573] `# 1 Simple YOLO 代码理解笔记`
+- [574] `## 1.1 dataset.py`
+- [575] `### 1.1.1 objectness 和 class 为什么都是维度`
+- [576] `### 1.1.2 _load_target 的核心`
+- [577] `### 1.1.3 怎么找到目标属于哪个 grid`
+- [578] `### 1.1.4 中心是局部的，宽高是全局的`
+- [579] `### 1.1.5 同一个 cell 多个目标怎么办`
+- [580] `### 1.1.6 写入 target`
+- [581] `## 1.2 model.py`
+- [582] `### 1.2.1 ConvBlock`
+- [583] `### 1.2.2 Backbone`
+- [584] `### 1.2.3 Head`
+- [585] `### 1.2.4 输出值为什么不直接满足概率约束`
+- [586] `## 1.3 loss.py`
+- [587] `### 1.3.1 有目标和没目标的 cell 分开`
+- [588] `### 1.3.2 objectness loss`
+- [589] `### 1.3.3 MSE 是什么`
+- [590] `### 1.3.4 BCEWithLogits 数学含义`
+- [591] `### 1.3.5 多类别 BCE 是怎么加的`
+- [592] `### 1.3.6 总 loss`
+- [593] `## 1.4 utils.py`
+- [594] `### 1.4.1 xywh_to_xyxy`
+- [595] `### 1.4.2 IoU`
+- [596] `### 1.4.3 NMS`
+- [597] `### 1.4.4 decode_predictions`
+- [598] `## 1.5 mAP 和 PR 曲线`
+- [599] `### 1.5.1 mAP 是什么`
+- [600] `### 1.5.2 Precision 和 Recall`
+- [601] `### 1.5.3 所有框是混在一起排序的`
+- [602] `### 1.5.4 给定 confidence threshold 后怎么理解 Precision/Recall`
+- [603] `### 1.5.5 mAP@0.5、mAP@0.9、mAP@0.5:0.95`
+- [604] `## 1.6 训练与报告相关脚本`
+- [605] `### 1.6.1 part2_train_eval.py`
+- [606] `### 1.6.2 scripts/prepare_fddb.py`
+- [607] `### 1.6.3 scripts/visualize_predictions.py`
+- [608] `### 1.6.4 report/report.md`
+
+## Part_1/Untitled.md
+
+- [609] `# 1 Computer Vision: 2025 Final`
+- [610] `## 1.1 Multiple Choice Questions ($21$ pts)`
+- [611] `## 1.2 True or False ($21$ pts)`
+- [612] `## 1.3 Short Answer Problems ($12$ pts)`
+- [613] `## 1.4 Long Answer Problems ($46$ pts)`
+- [614] `### 1.4.1 Convolutional Architectures ($9$ pts)`
+- [615] `### 1.4.2 Laplacian of Gaussians ($16$ pts)`
+- [616] `### 1.4.3 Optical Flow ($10$ pts)`
+- [617] `### 1.4.4 Projective Geometry ($11$ pts)`
