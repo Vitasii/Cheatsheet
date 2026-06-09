@@ -8,14 +8,15 @@
 \usepackage{lmodern}
 \usepackage{mathpazo}
 \usepackage{graphicx}
+\usepackage{xcolor}
 \renewcommand{\familydefault}{\sfdefault}
 \usepackage{bm}
 \usepackage{ctex}
 \numberwithin{equation}{subsection}
 % === ADJUSTABLE PARAMETERS ===
-\titleformat{\section}{\normalfont\fontsize{10pt}{11pt}\bfseries}{\thesection}{0.2em}{}
-\titleformat{\subsection}{\normalfont\fontsize{9pt}{10pt}\bfseries}{\thesubsection}{0.2em}{}
-\titleformat{\subsubsection}{\normalfont\fontsize{8pt}{9pt}\bfseries}{\thesubsubsection}{0.2em}{}
+\titleformat{\section}{\normalfont\fontsize{6pt}{7pt}\bfseries\color{blue}}{\thesection}{0.2em}{}
+\titleformat{\subsection}{\normalfont\fontsize{6pt}{7pt}\bfseries\color{blue}}{\thesubsection}{0.2em}{}
+\titleformat{\subsubsection}{\normalfont\fontsize{6pt}{7pt}\bfseries\color{blue}}{\thesubsubsection}{0.2em}{}
 
 % Column separation
 \setlength{\columnsep}{0.4cm}
@@ -74,9 +75,10 @@ $G_\sigma(x,y)=\frac{1}{2\pi\sigma^2}\exp(-(x^2+y^2)/(2\sigma^2))$; smoothing su
 \section{L3 Camera Models}
 \subsection{Perspective Projection}
 \lowterm{Camera center} $C$, \lowterm{optical axis} $Z$, image plane distance $f$, \lowterm{principal point} $p=(p_x,p_y)$. For camera coordinate $Q=(X,Y,Z)^\top$:
-\[
+\(
 x=\frac{fX}{Z}+p_x,\qquad y=\frac{fY}{Z}+p_y .
-\]
+\)
+
 Depth ambiguity: one pixel corresponds to a whole ray. Larger \lowterm{focal length} $\Rightarrow$ narrower \lowterm{field of view}.
 \key{Pinhole/lens}: tiny aperture gives sharp image but little light and diffraction; large aperture gives more light but blur; lens focuses rays from one depth plane onto sensor. Projection loses depth, metric distances and angles; it preserves incidence of points/lines, but objects through camera center may degenerate.
 \key{Homogeneous coordinates}: $(x,y,1)^\top\sim(sx,sy,s)^\top$. Line $l=(a,b,c)^\top$ means $l^\top x=0$; line through two points $l=x_1\times x_2$. Intrinsics:
@@ -85,9 +87,9 @@ K=\begin{bmatrix}f_x&s&p_x\\0&f_y&p_y\\0&0&1\end{bmatrix},\qquad
 \tilde x\sim KX_c .
 \]
 Square/no skew: $s=0,f_x=f_y=f$. Full projection:
-\[
+\(
 X_c=RX_w+t=R(X_w-C),\quad P=K[R\mid t],\quad \tilde x\sim PX_w .
-\]
+\)
 Projection matrix decomposition:
 \[
 P=K\Pi_0
@@ -100,53 +102,54 @@ After $\tilde x=PX$, divide by third coordinate.
 
 \subsection{Projective Properties}
 Points map to points; 3D lines generally map to image lines; parallel 3D lines may meet at vanishing point. For line $X(t)=V+tD$, as $t\to\infty$, projected point depends only on direction $D$:
-\[
+\(
 \tilde x_v\sim KD,\qquad D\sim K^{-1}\tilde x_v .
-\]
+\)
+
 \lowterm{Vanishing points} of directions in a plane lie on the \lowterm{vanishing line}; ground-plane vanishing line is \lowterm{horizon}. Parallel planes share horizon line. \lowterm{Orthographic projection} drops depth:
-\[
+\(
 (X,Y,Z,1)^\top\mapsto(X,Y,1)^\top
-\]
+\)
 with no perspective division; good when depth variation is small relative to distance.
 \key{VP caveats}: lines parallel to image plane meet at infinity; 2D image intersection does not imply 3D parallel lines. \key{Calibration}: known \lowterm{3D calibration pattern} + detected 2D corners estimates $K$ and extrinsics; three orthogonal vanishing points can calibrate \lowterm{Manhattan scenes}. \key{Single-view metrology}: with flat ground and level camera, horizon height can reveal camera height on vertical objects; with known $K$ and ground plane, backproject image rays to plane and place CAD/measure scene.
 
 \section{L4 Stereo \& Epipolar Geometry}
 \subsection{Parallel Calibrated Stereo}
 Two views turn a left pixel ray into an \lowterm{epipolar line} in right image; matching + \lowterm{triangulation} recovers 3D. For rectified parallel cameras with \lowterm{baseline} $B$, focal $f$:
-\[
+\(
 y_l=y_r,\qquad d=x_l-x_r,\qquad Z=\frac{fB}{d}.
-\]
+\)
 Closer objects have larger \lowterm{disparity}. Full 3D from left image:
-\[
+\(
 X=\frac{(x_l-p_x)Z}{f},\qquad Y=\frac{(y_l-p_y)Z}{f}.
-\]
+\)
 
 
 \subsection{General Epipolar Geometry}
 \lowterm{Epipole} $e_r$: left camera center projected into right image. \lowterm{Epipolar plane} $(C_l,C_r,P)$ intersects images in paired epipolar lines; matching search becomes 1D. \lowterm{Fundamental matrix} maps point to line:
-\[
+\(
 l_r=Fp_l,\qquad p_r^\top Fp_l=0.
-\]
+\)
 Construction: $F=[e_r]_\times H_\pi$, where $H_\pi$ is plane-induced homography and
 \[
 [e]_\times=\begin{bmatrix}0&-e_3&e_2\\e_3&0&-e_1\\-e_2&e_1&0\end{bmatrix}.
 \]
 Each correspondence gives linear equation in $F$ entries:
-\[
-\begin{aligned}
-&x_rx_lf_{11}+x_ry_lf_{12}+x_rf_{13}
-+y_rx_lf_{21}+y_ry_lf_{22}\\
-&\quad +y_rf_{23}+x_lf_{31}+y_lf_{32}+f_{33}=0 .
-\end{aligned}
-\]
-$F$ has scale ambiguity and rank constraint; use multiple matches + least squares/RANSAC. \lowterm{Rectification} warps images so epipolar lines become horizontal. From $F$ one projective camera choice: $P_l=[I\mid0]$, $P_r=[[e_r]_\times F\mid e_r]$.
+\(
+x_rx_lf_{11}+x_ry_lf_{12}+x_rf_{13}
++y_rx_lf_{21}+y_ry_lf_{22}
++y_rf_{23}+x_lf_{31}+y_lf_{32}+f_{33}=0 .
+\)
+$F$ has scale ambiguity and rank constraint; use multiple matches + least squares/RANSAC. 
+
+\lowterm{Rectification} warps images so epipolar lines become horizontal. From $F$ one projective camera choice: $P_l=[I\mid0]$, $P_r=[[e_r]_\times F\mid e_r]$.
 \key{F facts}: $F$ has scale ambiguity + rank-2 constraint, so 7 DoF; $e_r^\top F=0$ and $Fe_l=0$. Need $n\ge7$ matches in principle, more with RANSAC in practice. \key{SfM}: \lowterm{multi-view stereo} jointly estimates cameras and 3D points by minimizing \lowterm{reprojection error} $\sum_{ij}\|x_{ij}-\pi(P_iX_j)\|^2$; solved by \lowterm{bundle adjustment}. \key{Structured light}: projector emits known pattern to simplify correspondence; \lowterm{Kinect} uses IR pattern/depth sensing.
 
 \section{L5 Keypoints, Features, Matching}
 \key{Local feature goal}: match corresponding image points from same world point. Recall needs invariance to rotation/scale/affine/illumination; precision needs contrast/distinctiveness and locality. Raw patch descriptor is sensitive to shifts/rotations.
 \key{Detector desiderata}: salient + repeatable under viewpoint/illumination. Matching all pixels increases false positives unless descriptor is extremely strong.
 \subsection{SIFT \& Keypoint Selection}
-\key{SIFT Descriptor}: \lowterm{Scale-Invariant Feature Transform}. Scale invariance from \lowterm{Gaussian pyramid/scale-space}; illumination robustness from \lowterm{normalized gradients}; rotation invariance from \lowterm{dominant orientation}. Descriptor: rotate local grid to dominant gradient, split into $4\times4$ cells, each with 8-bin gradient histogram $\Rightarrow128$D descriptor.
+\key{SIFT Descriptor}: \lowterm{Scale-Invariant Feature Transform}. \lowterm{Gaussian pyramid/scale-space} enables scale invariance; illumination robustness from \lowterm{normalized gradients}; rotation invariance from \lowterm{dominant orientation}. Descriptor: rotate local grid to dominant gradient, split into $4\times4$ cells, each with 8-bin gradient histogram $\Rightarrow128$D descriptor.
 \key{SIFT matching}: \lowterm{nearest neighbor} in Euclidean descriptor space; \lowterm{threshold ratio} of nearest to 2nd nearest descriptor. Low ratio = good match; high ratio = ambiguous.
 \key{Corners}: intensity changes in all directions. \lowterm{Harris} uses local second-moment matrix:
 \[
@@ -163,21 +166,23 @@ Large eigenvalues in both directions $\Rightarrow$ corner; one large one small $
 \begin{gathered}
 \begin{bmatrix}x'\\y'\\w'\end{bmatrix}\sim
 H\begin{bmatrix}x\\y\\1\end{bmatrix},\quad
-H=\begin{bmatrix}a&b&c\\d&e&f\\g&h&i\end{bmatrix}\sim\lambda H,\\
+H=\begin{bmatrix}a&b&c\\d&e&f\\g&h&i\end{bmatrix}\sim\lambda H,\quad
 T(t)=\begin{bmatrix}1&0&t_x\\0&1&t_y\\0&0&1\end{bmatrix},\quad
 A=\begin{bmatrix}a&b&c\\d&e&f\\0&0&1\end{bmatrix}.
 \end{gathered}
 \]
 Translation has identity upper-left $2\times2$ and right column $(t_x,t_y)$; affine uses arbitrary upper-left $2\times2$ plus translation column. $H$ has 8 DoF up to scale; each point pair gives 2 equations, so solving needs $\ge4$ pairs; over-constrained solve least squares. \lowterm{Image mosaic}: reproject images from same center of projection into a shared synthetic wide-angle camera.
 \key{2D transform hierarchy}: translation 2 DoF; similarity 4 DoF (translation+rotation+uniform scale); affine 6 DoF, preserves parallel lines; homography/projective 8 DoF, preserves straight lines but not parallelism. \key{Warping}: \lowterm{forward warp} can create holes/non-integer hits; \lowterm{inverse sampling} with interpolation is usually cleaner. \lowterm{Mosaic pipeline}: detect/match features $\to$ estimate $H$ with RANSAC $\to$ warp to common frame $\to$ blend.
+
 \key{RANSAC}: robust fitting under outliers; least squares is fragile because squared residuals let bad matches dominate. \lowterm{Inlier}: residual below threshold; \lowterm{outlier}: inconsistent match/noise/other structure; \lowterm{consensus set}: inliers supporting a model. Loop: sample minimal seed, fit model, count inliers under threshold $t$, keep largest consensus, refit on all inliers. For homography seed size $s=4$; residual after homogeneous division:
-\[
+\(
 \hat p'_i=\operatorname{dehom}(Hp_i),\qquad e_i=\|\hat p'_i-p'_i\|_2,\quad e_i<t\Rightarrow\text{inlier}.
-\]
+\)
 Trial count for success probability $P$, inlier ratio $w$, sample size $s$:
-\[
+\(
 N=\frac{\log(1-P)}{\log(1-w^s)},\qquad 1-P=(1-w^s)^N .
-\]
+\)
+
 Tune sample size $s$, threshold $t$, success probability $P$, max trials $N$, min consensus size. Pros: simple/general, often works well; cons: poor with low inlier ratio ($w^s$ tiny), bad thresholds, degenerate/minimal samples.
 
 \section{L6 Vision Neural Networks}
@@ -186,103 +191,114 @@ Tune sample size $s$, threshold $t$, success probability $P$, max trials $N$, mi
 \[
 \begin{gathered}
 W_2=\frac{W_1-F+2P}{S}+1,\quad
-H_2=\frac{H_1-F+2P}{S}+1,\\
+H_2=\frac{H_1-F+2P}{S}+1,\quad
 \#\theta=F^2CK+K.
 \end{gathered}
 \]
 Pooling: per-channel downsample, no parameters; \lowterm{max pooling} $W_2=(W_1-F)/S+1$. \lowterm{$1\times1$ conv} mixes channels only, useful for projection/bottleneck. \lowterm{ReLU} $f(x)=\max(0,x)$: efficient, non-saturating positive side, but dead ReLU/output not zero-centered.
-\key{FC vs Conv}: \lowterm{FC} flattens $HWC$ into a vector; params for $M$ outputs are $HWC\cdot M+M$, no spatial sharing. Conv keeps the grid, uses local receptive fields and shared weights. \lowterm{Sigmoid/tanh} saturate, kill gradients, are not zero-centered (sigmoid), and use expensive exp; ReLU is fast/non-saturating for $x>0$ but zero-gradient for $x<0$; \lowterm{LeakyReLU/ELU} mitigate dead units.
-\key{Initialization/normalization}: constant init breaks symmetry poorly; small random can vanish/explode. Xavier std $1/\sqrt{D_{in}}$. LayerNorm:
-\[
+\key{FC vs Conv}: \lowterm{FC} flattens $HWC$ into a vector; params for $M$ outputs are $HWC\cdot M+M$, no spatial sharing. Conv keeps the grid, uses local receptive fields and shared weights. \lowterm{Sigmoid/tanh} ; \lowterm{LeakyReLU/ELU}
+
+\key{Initialization/normalization}: constant init breaks symmetry poorly; small random can vanish/explode. Xavier std $1/\sqrt{D_{in}}$.
+
+LayerNorm:
+\(
 \mu=\frac1d\sum_jx_j,\quad \sigma^2=\frac1d\sum_j(x_j-\mu)^2,\quad y_j=\gamma\frac{x_j-\mu}{\sqrt{\sigma^2+\epsilon}}+\beta.
-\]
+\)
+
 \lowterm{Regularization/generalization}: early stopping, data augmentation, dropout, stochastic depth, random crop, Mixup. \key{Regularization view}: always keep best validation snapshot; augmentation/dropout/stochastic depth can be read as training with injected noise, while test-time prediction marginalizes/averages over the noise.
 
 \subsection{Architectures}
 \lowterm{AlexNet}: ReLU, data augmentation, GPU split, ImageNet 2012. \lowterm{ResNet} solves deep optimization by residual block $H(x)=F(x)+x$; if $F=0$ identity is easy. \lowterm{Bottleneck}: $1\times1$ reduce, $3\times3$, $1\times1$ expand. \lowterm{DenseNet}: each layer connects to all later layers, feature reuse, gradient flow. \lowterm{Depthwise separable conv} decomposes standard conv into depthwise spatial + pointwise channel:
-\[
+\(
 K^2C^2\to K^2C+C^2.
-\]
+\)
+
 \lowterm{ConvNeXt}: Transformer ideas in CNN: patchify stem, depthwise conv, inverted bottleneck, GeLU, BatchNorm$\to$LayerNorm, fewer norm layers, separate downsampling. \lowterm{U-Net}: encoder-decoder with long skip connections for localization; descendants in segmentation, diffusion, point cloud. \key{ResNet head}: drops large FC stack; last conv $\to$ global average pooling $\to$ class FC, reducing params and supporting variable spatial input. \key{ConvNeXt V2}: not just architecture; ConvNeXt blocks are co-designed with MAE-style/self-supervised training.
 
 \subsection{Attention, Transformer, ViT}
 \lowterm{Attention} with query $Q$, data $X$: $K=XW_K,V=XW_V$,
-\[
+\(
 E=\frac{QK^\top}{\sqrt{D}},\quad A=\softmax(E),\quad Y=AV.
-\]
+\)
+
 \lowterm{Self-attention}: $Q=XW_Q,K=XW_K,V=XW_V$. \lowterm{Masked attention} sets illegal future logits to $-\infty$. \lowterm{Multi-head}: $H$ heads, $D_H=D/H$, concatenate then output projection. Complexity/memory $O(N^2)$ due to attention matrix; \lowterm{FlashAttention} avoids materializing full $N\times N$ matrix.
 \lowterm{Transformer block}: self-attention is vector interaction; LayerNorm/MLP are per-token; pre-norm makes residual identity easier. \lowterm{ViT}: split image into patches, flatten, linear project to tokens, add positional embedding, Transformer, pool/[CLS], classify. Example $16\times16\times3=768$ patch vector. ViT weakens CNN translation equivariance but gives global interaction.
+
 RMSNorm:
-\[
+\(
 y_i=\frac{x_i}{\sqrt{\epsilon+\frac1N\sum_i x_i^2}}\gamma_i.
-\]
+\)
 
 \section{L7 Classification \& Representation Learning}
 \subsection{Recognition \& Self-Supervision}
 Recognition tasks: identification, scene/object classification, annotation, detection, segmentation, pose, attributes, action. Classification challenge: semantic gap, viewpoint, clutter, illumination, occlusion, deformation, intra-class variation. \lowterm{Supervised pipeline}: collect labels, train classifier, evaluate; expensive labels motivate \lowterm{self-supervised learning (SSL)}.
 \key{Pretext vs downstream}: labels generated from data itself for pretraining; downstream is real labeled task. \key{Pretext risk}: auto-generated labels may teach task artifacts rather than transferable semantics if the pretext task is too narrow.
-\key{MAE}: mask high ratio patches (e.g. 75\%), \lowterm{encoder} sees visible patches only, \lowterm{decoder} reconstructs pixels at masked patches; keep encoder, discard decoder. Loss:
-\[
+
+\key{MAE}: mask high ratio patches (e.g. 75\%), \lowterm{encoder} sees visible patches only, \lowterm{decoder} reconstructs pixels at masked patches; keep encoder, discard decoder in downstream tasks. Loss:
+\(
 \mathcal L_{\mathrm{MAE}}=\frac1{|\mathcal M|}\sum_{i\in\mathcal M}\|x_i-\hat x_i\|_2^2.
-\]
+\)
 Asymmetric: large encoder, small decoder.
 
 \subsection{Contrastive Learning}
 Goal: positive pairs close, negatives far. \lowterm{InfoNCE}:
-\[
+\(
 L=-\E\log\frac{\exp(s(f(x),f(x^+)))}{\exp(s(f(x),f(x^+)))+\sum_{j=1}^{N-1}\exp(s(f(x),f(x_j^-)))}.
-\]
+\)
+
 \lowterm{SimCLR}: two augmentations of same image form positive; cosine score $s(u,v)=u^\top v/(\|u\|\|v\|)$; encoder $h=f(\tilde x)$, projection head $z=g(h)$. \lowterm{NT-Xent} for positive $(i,j)$:
-\[
+\(
 \ell_{ij}=-\log\frac{\exp(s(z_i,z_j)/\tau)}{\sum_{k\ne i}\exp(s(z_i,z_k)/\tau)}.
-\]
-Downstream uses $h$ not $z$. \lowterm{MoCo}: queue of keys decouples negatives from batch size; key encoder EMA:
-\[
+\)
+Downstream uses $h$ not $z$. 
+
+\lowterm{MoCo}: queue of keys decouples negatives from batch size; key encoder EMA:
+\(
 \theta_k\leftarrow m\theta_k+(1-m)\theta_q.
-\]
+\)
 Queue motivation: extra forward passes for many random negatives are expensive; precomputed dataset features quickly become stale as encoder updates; queue reuses recent mini-batch keys as a cheap/stable compromise.
 \lowterm{DINO}: student matches teacher outputs; teacher EMA, centering+sharpening avoid collapse:
-\[
+\(
 \theta_t\leftarrow \tau\theta_t+(1-\tau)\theta_s.
-\]
+\)
 DINO's ViT attention maps often localize object regions without labels. \lowterm{DINOv2} scales curated data + global DINO + local masked/iBOT, strong patch features. \key{SSL eval}: pretrain encoder, discard projection head, then freeze+linear probe or fine-tune on downstream labels.
 
 \subsection{JEPA}
 \lowterm{JEA} aligns embeddings $s_x=Enc_x(x),s_y=Enc_y(y)$. \lowterm{JEPA} predicts target representation:
-\[
+\(
 \hat s_y=Pred(Enc_x(x),z),\qquad \mathcal L=\|\hat s_y-s_y\|^2.
-\]
+\)
 Not pixel reconstruction; predicts abstract representation and avoids irrelevant texture. Because $Enc_y$ is not invertible, prediction in representation space need not reconstruct full $y$. \lowterm{H-JEPA} passes latents hierarchically to predict more abstract/longer-term structure. \lowterm{Collapse}: all inputs map to constant; \lowterm{SIGReg} regularizes latent statistics to avoid collapse.
 
 \subsection{Vision-Language Representation}
 
 \key{CLIP}: 
-\[
+\(
 (\text{image},\text{text})\to\text{matched pair}.
-\]
+\)
 Image encoder and text encoder produce embeddings; batch similarity:
-\[
+\(
 I_i=f_{\mathrm{img}}(x_i),\quad T_j=f_{\mathrm{text}}(t_j),\quad S_{ij}=I_i^\top T_j.
-\]
+\)
 Diagonal entries are positives, off-diagonal entries are negatives; CLIP trains both image-to-text and text-to-image retrieval. Compared with SimCLR, positives are Internet image-text pairs rather than two augmentations of one image. \lowterm{Zero-shot classification}: text embeddings act like classifier weights:
-\[
+\(
 \hat c=\argmax_{c\in\mathcal C} f_{\mathrm{img}}(x)^\top f_{\mathrm{text}}(\text{``a photo of a }c\text{''}).
-\]
+\)
+
 \lowterm{SigLIP}: replaces CLIP softmax competition with pairwise sigmoid binary matching, decoupling loss behavior from batch-size-as-class-count:
-\[
+\(
 \mathcal L_{\mathrm{SigLIP}}=-\frac1{|B|}\sum_{i,j}\log\sigma\!\left(z_{ij}(t x_i^\top y_j+b)\right),\quad z_{ij}\in\{+1,-1\}.
-\]
+\)
 $z_{ij}=+1$ for matched diagonal pairs and $-1$ for mismatched pairs; $t$ is learnable temperature, $b$ learnable bias. \lowterm{CoCa}: CLIP-style contrastive objective + captioning decoder; contrastive loss gives global image-text alignment, captioning loss $p(w_1,\ldots,w_T|\text{image})$ gives finer language supervision.
 
 
 \subsection{Vision-Language Models \& Data Caveats}
  \lowterm{LLaVA}: vision encoder $\to$ projector/modality adapter $\to$ visual tokens in LLM context:
-\[
-\begin{gathered}
-\text{image}\xrightarrow{\text{vision enc.}}\text{visual features}\xrightarrow{\text{projector}}\text{visual tokens},\\
+\(
+\text{image}\xrightarrow{\text{vision enc.}}\text{visual features}\xrightarrow{\text{projector}}\text{visual tokens},\quad
 [\text{visual tokens},\text{text tokens}]\xrightarrow{\text{LLM}}\text{output text}.
-\end{gathered}
-\]
+\)
+
 Two-stage training: image-text alignment trains projector so visual tokens fit LLM space; visual instruction tuning teaches response format and question answering. \lowterm{Flamingo}: inserts gated cross-attention into the language model; visual encoder/downsampling supplies visual features, masked attention controls visible context, and gated cross-attention enables few-shot multimodal in-context learning.
 
 
@@ -290,42 +306,46 @@ Two-stage training: image-text alignment trains projector so visual tokens fit L
 \subsection{Task \& Metrics}
 \lowterm{Detection output} set $\{(b_i,c_i,s_i)\}_{i=1}^N$: boxes, class, confidence. Harder than classification: variable count/scale/location, overlaps, background. Approaches: sliding window, region proposal, implicit shape/codebook, modern learned queries. \key{Implicit Shape Model}: local features match codebook entries; each match casts vote for object center/scale, Hough-style detection and rough segmentation.
 \key{IoU}: $\IoU(A,B)=\frac{|A\cap B|}{|A\cup B|}$. Precision/recall:
-\[
+\(
 P=\frac{TP}{TP+FP},\quad R=\frac{TP}{TP+FN}.
-\]
+\) TP: is object, exist IoU $>$ threshold. FP: not object, exist IoU $>$ threshold. FN: is object, not exist IoU $>$ threshold. 
+
 \lowterm{AP} = area under PR curve after sorting detections by confidence; \lowterm{mAP} = mean over classes/IoU thresholds. Each GT matched once; duplicate boxes become FP. \lowterm{Anchor/proposal box regression} often uses
-\[
+\(
 t_x=\frac{x-x_a}{w_a},\quad t_y=\frac{y-y_a}{h_a},\quad t_w=\log\frac{w}{w_a},\quad t_h=\log\frac{h}{h_a}.
-\]
+\)
 Detection loss:
-\[
+\(
 \mathcal L=\mathcal L_{cls}+\lambda\mathcal L_{box}.
-\]
+\)
 
 \subsection{R-CNN Family}
 \lowterm{R-CNN}: Selective Search $\sim2000$ proposals, crop/warp each, CNN per proposal, classify + box correction; slow due to repeated convolution. \lowterm{Fast R-CNN}: one whole-image backbone, crop shared feature with RoIPool, heads. \lowterm{RoIPool} maps variable RoI to fixed $7\times7$ by quantized bins; quantization hurts alignment. \lowterm{Faster R-CNN}: learn proposals with \lowterm{RPN}. For feature map $H\times W$ and $K$ anchors/location: candidates $KHW$, objectness logits $2KHW$, box offsets $4KHW$; sort by objectness and keep top $\sim300$ proposals. Two-stage = RPN proposals then RoI classify/regress.
-\key{Single-stage}: \lowterm{YOLO}/\lowterm{SSD}/\lowterm{RetinaNet} dense predict on grid. YOLO output:
-\[
+\key{Single-stage}: \lowterm{YOLO}/\lowterm{SSD}/\lowterm{RetinaNet} dense predict on grid. YOLO devide figure to $S\times S$ patches, predict respectively. output shape:
+\(
 S\times S\times(5B+C),
-\]
-where each box has objectness + $(x,y,w,h)$ and classes. NMS: keep highest score, remove lower boxes with high IoU, repeat.
+\)
+where $B$ boxes has $(x,y,w,h)$ and classes. NMS: keep highest score, remove lower boxes with high IoU, repeat.
 Final YOLO class-specific score is roughly $P(\mathrm{obj})P(c)$; \lowterm{cell/grid assignment} makes dense detection fast but can struggle with crowded small objects.
 
 \subsection{DETR \& Open Vocabulary}
 \lowterm{DETR}: CNN/ViT features + positional encoding + Transformer encoder + learned object queries in decoder; each query predicts class (incl. no-object) and box. \lowterm{Set prediction} uses \lowterm{Hungarian matching}:
-\[
+\(
 \hat\sigma=\argmin_\sigma\sum_{j=1}^M \mathcal C(y_j,\hat y_{\sigma(j)}),
-\]
+\)
 cost = class + L1 box + GIoU. Matching encourages one prediction per GT, reducing NMS need. Tradeoff: clean end-to-end but slow convergence/small objects.
 \lowterm{Open-vocabulary detection} replaces fixed class head by text queries. \lowterm{OWL-ViT}: CLIP-style pretraining then detection fine-tuning; removes CLIP pooling so per-patch/token image embeddings compare to text/image queries, while a box MLP predicts coordinates. Text embedding acts as classifier weights. \lowterm{OWLv2/self-training} expands detection supervision. \lowterm{Grounding DINO}: language-aware open-set detector; bridges text phrase to boxes.
 
 \section{L9 Dense Prediction}
 \subsection{Segmentation, FCN, Upsampling}
 \lowterm{Dense prediction}: $I\in\R^{H\times W\times3}\to Y\in\R^{H\times W\times C}$. \lowterm{Semantic segmentation} = class per pixel; \lowterm{instance} = distinguish object instances; \lowterm{panoptic} = stuff + things. Depth $D\in\R^{H\times W}$; flow $C=2$; diffusion predicts dense noise/clean image. Core tension: semantic abstraction vs spatial precision.
-\lowterm{FCN} converts classifier to fully convolutional: $1\times1$ conv over feature map gives low-res class score map; bilinear or learned transposed-conv upsampling restores resolution. \lowterm{Skip fusion} combines high-level semantic coarse maps with low-level fine maps; FCN fuses skip logits by summing. Segmentation metrics:
-\[
+\lowterm{FCN} converts classifier to fully convolutional: $1\times1$ conv over feature map gives low-res class score map; bilinear or learned transposed-conv upsampling restores resolution. \lowterm{Skip fusion} combines high-level semantic coarse maps with low-level fine maps; FCN fuses skip logits by summing. 
+
+Segmentation metrics:
+\(
 IoU_c=\frac{TP_c}{TP_c+FP_c+FN_c},\qquad mIoU=\frac1C\sum_cIoU_c.
-\]
+\)
+
 \lowterm{Upsampling}: interpolation, transposed convolution (linear operator transpose, not inverse), max unpooling with switches, resize+conv to reduce checkerboard. Stride-2 transposed conv can be viewed as inserting zero rows/cols then convolving with flipped kernel; uneven overlap causes checkerboard. \lowterm{DeconvNet}: encoder-decoder; \lowterm{U-Net} concatenates encoder features with decoder features and predicts at the end; \lowterm{FPN}: top-down + lateral connections to semantic pyramid.
 
 \subsection{Mask R-CNN, SAM, Depth, Generation}
@@ -344,7 +364,7 @@ IoU_c=\frac{TP_c}{TP_c+FP_c+FN_c},\qquad mIoU=\frac1C\sum_cIoU_c.
 
 \section{L11 Curating Vision-Language Data}
 \key{Alt-text web data}: large scale but noisy/mismatched. Uses: generation, VLM, VLA. \lowterm{Pipeline}: crawl image-text, text filtering, image-text alignment verification, dedup/safety/balancing.
-\key{Three schools}: \lowterm{text-only filtering} (WIT/MetaCLIP), \lowterm{image-text alignment verification} (CC3M/CC12M/LAION/DataComp/DFN), and \lowterm{embracing noise/scale} (ALIGN/No Filter/WebLI). Quality controls precision; diversity controls style/long-tail/cultural coverage; safety filtering is still needed even when semantic filtering is relaxed.
+\key{Three schools}: \lowterm{text-only filtering} (WIT/MetaCLIP), \lowterm{image-text alignment verification} (CC3M/CC12M/LAION /DataComp/DFN), and \lowterm{embracing noise/scale} (ALIGN/No Filter/WebLI). Quality controls precision; diversity controls style/long-tail/cultural coverage; safety filtering is still needed even when semantic filtering is relaxed.
 \subsection{Text-Side Filtering}
 \lowterm{Text-side filtering}: build vocabulary/concepts, match text, balance counts. \lowterm{WIT} behind CLIP; \lowterm{WIT vs YFCC}: scale and web alt-text matter. \lowterm{MetaCLIP} demystifies CLIP data: use metadata vocabulary; cap per concept (e.g. 20k) to balance frequent/rare terms; performance comes from transparent curation + scale.
 \subsection{Image-Text Alignment}
@@ -353,136 +373,134 @@ IoU_c=\frac{TP_c}{TP_c+FP_c+FN_c},\qquad mIoU=\frac1C\sum_cIoU_c.
 \section{L12 Diffusion \& Score Models}
 \subsection{EBM, Score, DSM}
 \lowterm{Density modeling} wants sample from $p(x)$. \lowterm{EBM}: $p_\theta(x)=\exp(-E_\theta(x))/Z_\theta$, $Z$ intractable. \lowterm{Langevin dynamics} uses score:
-\[
+\(
 x_{k+1}=x_k+\frac{\eta}{2}\nabla_x\log p(x_k)+\sqrt{\eta}\epsilon_k.
-\]
+\)
+
 \lowterm{Score matching} learns $s_\theta(x)\approx\nabla_x\log p_{\text{data}}(x)$ without $Z$:
-\[
-\begin{aligned}
+
+\(
 \mathcal J_{\mathrm{SM}}
-&=\frac12\E_{p_{\text{data}}}\|s_\theta(x)-\nabla_x\log p_{\text{data}}(x)\|^2\\
+=\frac12\E_{p_{\text{data}}}\|s_\theta(x)-\nabla_x\log p_{\text{data}}(x)\|^2,\quad
 \min_\theta\mathcal J_{\mathrm{SM}}
-&\equiv \min_\theta\E_{p_{\text{data}}}\left[\frac12\|s_\theta(x)\|^2+\nabla_x\cdot s_\theta(x)\right].
-\end{aligned}
-\]
+\equiv \min_\theta\E_{p_{\text{data}}}\left[\frac12\|s_\theta(x)\|^2+\nabla_x\cdot s_\theta(x)\right].
+\)
 \lowterm{Hyvarinen score matching} removes unknown $\nabla\log p$ by integration by parts; \lowterm{denoising score matching} avoids second derivatives by learning scores of noisy conditional Gaussians. With $x_\sigma=x+\sigma\epsilon$:
-\[
+\(
 \nabla_{x_\sigma}\log p_\sigma(x_\sigma|x)=-(x_\sigma-x)/\sigma^2.
-\]
-\lowterm{Noise Conditional Score Network (NCSN)} learns $s_\theta(x,\sigma)\approx\nabla_x\log p_\sigma(x)$ for multiple noise levels $\sigma_1>\cdots>\sigma_L$. \lowterm{Annealed Langevin Dynamics} samples coarse-to-fine; for each $\sigma_i$, run
-\[
+\)
+\lowterm{Noise Conditional Score Network (NCSN)} learns $s_\theta(x,\sigma)\approx\nabla_x\log p_\sigma(x)$ for multiple noise levels $\sigma_1>\cdots>\sigma_L$. 
+
+\lowterm{Annealed Langevin Dynamics} samples coarse-to-fine; for each $\sigma_i$, run
+\(
 x_{k+1}=x_k+\frac{\eta_i}{2}s_\theta(x_k,\sigma_i)+\sqrt{\eta_i}\epsilon_k .
-\]
+\)
 Metropolis-Hastings accepts/rejects random-walk proposals but mixes slowly in high dimensions; Langevin uses score direction for informed updates.
 
 \subsection{DDPM}
 \lowterm{Forward}:
-\[
-q(x_t|x_{t-1})=\N(\sqrt{\alpha_t}x_{t-1},(1-\alpha_t)I),\quad \alpha_t=1-\beta_t,
-\]
-\[
-\begin{gathered}
+\(
+q(x_t|x_{t-1})=\N(\sqrt{\alpha_t}x_{t-1},(1-\alpha_t)I),\quad \alpha_t=1-\beta_t,\quad
 \bar\alpha_t=\prod_{s=1}^t\alpha_s,\quad
-q(x_t|x_0)=\N(\sqrt{\bar\alpha_t}x_0,(1-\bar\alpha_t)I),\\
+q(x_t|x_0)=\N(\sqrt{\bar\alpha_t}x_0,(1-\bar\alpha_t)I),\quad
 x_t=\sqrt{\bar\alpha_t}x_0+\sqrt{1-\bar\alpha_t}\epsilon.
-\end{gathered}
-\]
+\)
 \lowterm{Reverse}:
-\[
+\(
 p_\theta(x_{t-1}|x_t)=\N(\mu_\theta(x_t,t),\Sigma_\theta(x_t,t)).
-\]
+\)
+
 \lowterm{Posterior}:
-\[
-q(x_{t-1}|x_t,x_0)=\N(\tilde\mu_t,\tilde\beta_tI),
-\]
-\[
+\(
+q(x_{t-1}|x_t,x_0)=\N(\tilde\mu_t,\tilde\beta_tI),\quad
 \tilde\mu_t=\frac{\sqrt{\bar\alpha_{t-1}}\beta_t}{1-\bar\alpha_t}x_0+
 \frac{\sqrt{\alpha_t}(1-\bar\alpha_{t-1})}{1-\bar\alpha_t}x_t,\quad
 \tilde\beta_t=\frac{1-\bar\alpha_{t-1}}{1-\bar\alpha_t}\beta_t.
-\]
+\)
+
+
 \lowterm{Noise parameterization}:
-\[
+\(
 x_0=\frac{x_t-\sqrt{1-\bar\alpha_t}\epsilon}{\sqrt{\bar\alpha_t}},
-\qquad
+\quad
 \mathcal L_{\mathrm{simple}}=\E_{t,x_0,\epsilon}\|\epsilon-\epsilon_\theta(x_t,t)\|_2^2.
-\]
+\)
+
 \lowterm{Sampling}:
-\[
+\(
 x_{t-1}=\frac{1}{\sqrt{\alpha_t}}\left(x_t-\frac{\beta_t}{\sqrt{1-\bar\alpha_t}}\epsilon_\theta(x_t,t)\right)+\sigma_tz.
-\]
+\)
 
 \subsection{Continuous View \& Equivalent Targets}
-\lowterm{SDE/PF-ODE} unify score/diffusion:
-\[
-\begin{gathered}
-\dd x=f(x,t)\dd t+g(t)\dd w,\\
+\lowterm{SDE/PF-ODE} 
+\(
+\dd x=f(x,t)\dd t+g(t)\dd w,
 \dd x=\left[f(x,t)-\frac12g(t)^2\nabla_x\log p_t(x)\right]\dd t.
-\end{gathered}
-\]
+\) unify score/diffusion.
 \lowterm{Gaussian path}:
-\[
+\(
 z_t=\alpha_t x+\sigma_t\epsilon,\quad \mathrm{SNR}=\alpha_t^2/\sigma_t^2,\quad \lambda=\log \mathrm{SNR}.
-\]
+\)
+
 Equivalent targets: clean $x$, noise $\epsilon$, score $s_t(z)=-\E[\epsilon|z_t=z]/\sigma_t$, velocity/path derivative $v_t=\dot\alpha_tx+\dot\sigma_t\epsilon$, denoiser $D(z_t)=\E[x|z_t]$. \lowterm{Weighting and schedule} can be expressed in SNR/log-SNR coordinates; epsilon-prediction is not uniform in SNR, log-SNR makes interpretation cleaner.
 \key{Forward paths}: VE/EDM $x_t=x_0+\sigma_t\epsilon$; VP/DDPM $x_t=\alpha_tx_0+\sigma_t\epsilon,\alpha_t^2+\sigma_t^2=1$; Flow Matching $x_t=(1-t)x_0+t\epsilon$. Only VP keeps variance normalized. \key{VLB weight}: in $x_0$ prediction, DDPM VLB weights each step by SNR drop,
-\[
+\(
 L_{t-1}\propto (r_{t-1}-r_t)\|D_\theta(x_t,t)-x_0\|^2,\qquad r=\mathrm{SNR}.
-\]
+\)
 \key{Training design}: choose path, prediction target $(\epsilon,x_0,s,v)$, objective weight $w(\lambda)$, and noise proposal/schedule $q(\lambda)$; Monte Carlo estimator uses weight $w/q$. Slides compare uniform, EDM/sigmoid, and Min-SNR weighting; monotone weighted objectives can be rewritten as mixtures of ELBOs on Gaussian-noise-augmented data.
 
 \section{L13 Beyond Diffusion}
 \subsection{Normalizing Flow}
 \lowterm{Normalizing flow} uses invertible $z=f_\theta(x)$ with \lowterm{exact likelihood}:
-\[
+\(
 \log p_X(x)=\log p_Z(f_\theta(x))+\log\left|\det\frac{\partial f_\theta(x)}{\partial x}\right|.
-\]
+\)
 \lowterm{MLE} minimizes negative log-likelihood. \lowterm{Composition}: log-det sums over layers. Bottleneck: invertibility + tractable Jacobian determinant, dimension match. \lowterm{Triangular Jacobian} makes determinant product of diagonals. \lowterm{NICE additive coupling}:
-\[
+\(
 y_a=x_a,\quad y_b=x_b+m(x_a),\quad \det J=1.
-\]
+\)
 \lowterm{RealNVP affine coupling}:
-\[
+\(
 y_a=x_a,\quad y_b=x_b\odot\exp(s(x_a))+t(x_a),\quad \log|\det J|=\sum s(x_a).
-\]
+\)
 \lowterm{TarFlow}: transformer masked autoregressive flow over patches; triangular Jacobian via ordering. \lowterm{Autoregressive affine form}:
-\[
+\(
 z_i=\frac{x_i-\mu_i(x_{<i})}{\sigma_i(x_{<i})},\quad
 x_i=\mu_i(x_{<i})+\sigma_i(x_{<i})z_i,\quad
 \log|\det J|=\sum_i\log\sigma_i .
-\]
+\)
 \lowterm{Noise augmentation}: helps OOD generalization; without noise, $f^{-1}(z)$ only sees neighborhoods of discrete training samples, while sampling latent Gaussian maps through continuous space. \lowterm{Tweedie denoising}:
-\[
+\(
 \E[x|y]=y+\sigma^2\nabla_y\log p(y).
-\]
+\)
 \lowterm{Guidance}: analogous classifier-free extrapolation between conditional and null parameters,
-\[
+\(
 \tilde\mu_t^i=(1+w)\mu_t^i(c)-w\mu_t^i(\mathrm{null}),\quad
 \tilde\alpha_t^i=(1+w)\alpha_t^i(c)-w\alpha_t^i(\mathrm{null}).
-\]
+\)
 \lowterm{Unconditional guidance}: ramp strength over order index,
-\[
+\(
 \tilde\mu_t^i=(1+w_i)\mu_t^i(1)-w_i\mu_t^i(\tau),\qquad
 w_i=\frac{i}{T-1}w.
-\]
+\)
 
 \subsection{GAN, AR, Masked/Flexible-Order}
 \lowterm{GAN objective}:
-\[
+\(
 \min_G\max_D\E_{x\sim p_{data}}\log D(x)+\E_{z\sim p_z}\log(1-D(G(z))).
-\]
+\)
 Pros: fast high-fidelity samples; cons: unstable, mode collapse, no exact likelihood. \lowterm{Optimal discriminator}:
-\[
-\begin{gathered}
-D^*(x)=\frac{p_{data}(x)}{p_{data}(x)+p_G(x)},\\
+\(
+D^*(x)=\frac{p_{data}(x)}{p_{data}(x)+p_G(x)},
 V(D^*,G)=-\log4+2\,JSD(p_{data}\|p_G).
-\end{gathered}
-\]
+\)
+
 If supports barely overlap, \lowterm{JS saturation} makes generator gradients poor; with $D(G(z))=\sigma(f)$, the $\log(1-D)$ term can cause early \lowterm{gradient saturation}. \lowterm{WGAN}: replaces JS by Earth-Mover/Wasserstein-1,
-\[
+\(
 W(p_{\text{data}},p_G)=
 \inf_{\gamma\in\Pi(p_{\text{data}},p_G)}\E_{(x,y)\sim\gamma}\|x-y\|
 =\sup_{\|f\|_L\le1}\E_{x\sim p_{\text{data}}}f(x)-\E_{x\sim p_G}f(x),
-\]
+\)
 with 1-Lipschitz critic, giving useful gradients even for non-overlapping supports. \lowterm{RpGAN}: compares paired real/fake scores, $\E_{z,x}[f(D(G(z))-D(x))]$; each fake competes with real samples, so single-mode collapse still loses to other real modes. \lowterm{R3GAN}: adds principled R1/R2-style regularization to stabilize dynamics. \lowterm{ADD}: uses adversarial loss for diffusion distillation, $\mathcal L_{\rm student}=\mathcal L_{\rm distill}+\lambda\mathcal L_{\rm adv}$, where $\mathcal L_{\rm distill}$ comes from diffusion teacher. AR factorizes exact likelihood:
 \[
 p(x)=\prod_{i=1}^N p(x_i|x_{<i}),
