@@ -1,5 +1,5 @@
 \documentclass{article}
-\usepackage[landscape, margin=0.3cm]{geometry}
+\usepackage[landscape, margin=0.2cm]{geometry}
 \usepackage{multicol}
 \usepackage{amssymb}
 \usepackage{amsmath}
@@ -49,6 +49,9 @@
 \DeclareMathOperator{\softmax}{softmax}
 \DeclareMathOperator{\IoU}{IoU}
 
+\setlength{\arraycolsep}{2pt}
+\renewcommand{\arraystretch}{0.7}
+
 \begin{document}
 \tiny
 \begin{multicols*}{3}
@@ -76,34 +79,34 @@ $G_\sigma(x,y)=\frac{1}{2\pi\sigma^2}\exp(-(x^2+y^2)/(2\sigma^2))$; smoothing su
 \subsection{Perspective Projection}
 \lowterm{Camera center} $C$, \lowterm{optical axis} $Z$, image plane distance $f$, \lowterm{principal point} $p=(p_x,p_y)$. For camera coordinate $Q=(X,Y,Z)^\top$:
 \(
-x=\frac{fX}{Z}+p_x,\qquad y=\frac{fY}{Z}+p_y .
+x=\frac{fX}{Z}+p_x,\quad y=\frac{fY}{Z}+p_y .
 \)
 
 Depth ambiguity: one pixel corresponds to a whole ray. Larger \lowterm{focal length} $\Rightarrow$ narrower \lowterm{field of view}.
 \key{Pinhole/lens}: tiny aperture gives sharp image but little light and diffraction; large aperture gives more light but blur; lens focuses rays from one depth plane onto sensor. Projection loses depth, metric distances and angles; it preserves incidence of points/lines, but objects through camera center may degenerate.
 \key{Homogeneous coordinates}: $(x,y,1)^\top\sim(sx,sy,s)^\top$. Line $l=(a,b,c)^\top$ means $l^\top x=0$; line through two points $l=x_1\times x_2$. Intrinsics:
-\[
-K=\begin{bmatrix}f_x&s&p_x\\0&f_y&p_y\\0&0&1\end{bmatrix},\qquad
+\(
+K=\begin{bmatrix}f_x&s&p_x\\0&f_y&p_y\\0&0&1\end{bmatrix},\quad
 \tilde x\sim KX_c .
-\]
+\)
 Square/no skew: $s=0,f_x=f_y=f$. Full projection:
 \(
 X_c=RX_w+t=R(X_w-C),\quad P=K[R\mid t],\quad \tilde x\sim PX_w .
 \)
 Projection matrix decomposition:
-\[
+\(
 P=K\Pi_0
 \begin{bmatrix}R&0\\0&1\end{bmatrix}
 \begin{bmatrix}I&T\\0&1\end{bmatrix},\quad
 K=\begin{bmatrix}f&0&p_x\\0&f&p_y\\0&0&1\end{bmatrix},\quad
 \Pi_0=[I_3\mid0].
-\]
+\)
 After $\tilde x=PX$, divide by third coordinate.
 
 \subsection{Projective Properties}
 Points map to points; 3D lines generally map to image lines; parallel 3D lines may meet at vanishing point. For line $X(t)=V+tD$, as $t\to\infty$, projected point depends only on direction $D$:
 \(
-\tilde x_v\sim KD,\qquad D\sim K^{-1}\tilde x_v .
+\tilde x_v\sim KD,\quad D\sim K^{-1}\tilde x_v .
 \)
 
 \lowterm{Vanishing points} of directions in a plane lie on the \lowterm{vanishing line}; ground-plane vanishing line is \lowterm{horizon}. Parallel planes share horizon line. \lowterm{Orthographic projection} drops depth:
@@ -117,23 +120,23 @@ with no perspective division; good when depth variation is small relative to dis
 \subsection{Parallel Calibrated Stereo}
 Two views turn a left pixel ray into an \lowterm{epipolar line} in right image; matching + \lowterm{triangulation} recovers 3D. For rectified parallel cameras with \lowterm{baseline} $B$, focal $f$:
 \(
-y_l=y_r,\qquad d=x_l-x_r,\qquad Z=\frac{fB}{d}.
+y_l=y_r,\quad d=x_l-x_r,\quad Z=\frac{fB}{d}.
 \)
 Closer objects have larger \lowterm{disparity}. Full 3D from left image:
 \(
-X=\frac{(x_l-p_x)Z}{f},\qquad Y=\frac{(y_l-p_y)Z}{f}.
+X=\frac{(x_l-p_x)Z}{f},\quad Y=\frac{(y_l-p_y)Z}{f}.
 \)
 
 
 \subsection{General Epipolar Geometry}
 \lowterm{Epipole} $e_r$: left camera center projected into right image. \lowterm{Epipolar plane} $(C_l,C_r,P)$ intersects images in paired epipolar lines; matching search becomes 1D. \lowterm{Fundamental matrix} maps point to line:
 \(
-l_r=Fp_l,\qquad p_r^\top Fp_l=0.
+l_r=Fp_l,\quad p_r^\top Fp_l=0.
 \)
 Construction: $F=[e_r]_\times H_\pi$, where $H_\pi$ is plane-induced homography and
-\[
+\(
 [e]_\times=\begin{bmatrix}0&-e_3&e_2\\e_3&0&-e_1\\-e_2&e_1&0\end{bmatrix}.
-\]
+\)
 Each correspondence gives linear equation in $F$ entries:
 \(
 x_rx_lf_{11}+x_ry_lf_{12}+x_rf_{13}
@@ -152,17 +155,18 @@ $F$ has scale ambiguity and rank constraint; use multiple matches + least square
 \key{SIFT Descriptor}: \lowterm{Scale-Invariant Feature Transform}. \lowterm{Gaussian pyramid/scale-space} enables scale invariance; illumination robustness from \lowterm{normalized gradients}; rotation invariance from \lowterm{dominant orientation}. Descriptor: rotate local grid to dominant gradient, split into $4\times4$ cells, each with 8-bin gradient histogram $\Rightarrow128$D descriptor.
 \key{SIFT matching}: \lowterm{nearest neighbor} in Euclidean descriptor space; \lowterm{threshold ratio} of nearest to 2nd nearest descriptor. Low ratio = good match; high ratio = ambiguous.
 \key{Corners}: intensity changes in all directions. \lowterm{Harris} uses local second-moment matrix:
-\[
+\(
 \Delta^2\approx
 \begin{bmatrix}\Delta x&\Delta y\end{bmatrix}
 \begin{bmatrix}D_x^2&D_xD_y\\D_xD_y&D_y^2\end{bmatrix}
 \begin{bmatrix}\Delta x\\\Delta y\end{bmatrix}.
-\]
+\)
 Large eigenvalues in both directions $\Rightarrow$ corner; one large one small $\Rightarrow$ edge; both small $\Rightarrow$ flat. \lowterm{Harris response} often $R=\det M-k(\operatorname{tr}M)^2$. Scale-invariant interest points: \lowterm{Laplacian of Gaussian} $\nabla^2G_\sigma*I$ approximated by \lowterm{Difference of Gaussian} $(G_{k\sigma}-G_\sigma)*I\approx (k-1)\sigma\partial_\sigma(G_\sigma*I)$.
 
 \subsection{Homography \& RANSAC}
 \lowterm{Transformations}: translation/rotation/similarity/affine/projective. Affine preserves parallel lines; projective/homography may send parallel lines to vanishing point. Planar scene or pure camera rotation gives \lowterm{homography}:
-\[
+
+\(
 \begin{gathered}
 \begin{bmatrix}x'\\y'\\w'\end{bmatrix}\sim
 H\begin{bmatrix}x\\y\\1\end{bmatrix},\quad
@@ -170,17 +174,17 @@ H=\begin{bmatrix}a&b&c\\d&e&f\\g&h&i\end{bmatrix}\sim\lambda H,\quad
 T(t)=\begin{bmatrix}1&0&t_x\\0&1&t_y\\0&0&1\end{bmatrix},\quad
 A=\begin{bmatrix}a&b&c\\d&e&f\\0&0&1\end{bmatrix}.
 \end{gathered}
-\]
+\)
 Translation has identity upper-left $2\times2$ and right column $(t_x,t_y)$; affine uses arbitrary upper-left $2\times2$ plus translation column. $H$ has 8 DoF up to scale; each point pair gives 2 equations, so solving needs $\ge4$ pairs; over-constrained solve least squares. \lowterm{Image mosaic}: reproject images from same center of projection into a shared synthetic wide-angle camera.
 \key{2D transform hierarchy}: translation 2 DoF; similarity 4 DoF (translation+rotation+uniform scale); affine 6 DoF, preserves parallel lines; homography/projective 8 DoF, preserves straight lines but not parallelism. \key{Warping}: \lowterm{forward warp} can create holes/non-integer hits; \lowterm{inverse sampling} with interpolation is usually cleaner. \lowterm{Mosaic pipeline}: detect/match features $\to$ estimate $H$ with RANSAC $\to$ warp to common frame $\to$ blend.
 
 \key{RANSAC}: robust fitting under outliers; least squares is fragile because squared residuals let bad matches dominate. \lowterm{Inlier}: residual below threshold; \lowterm{outlier}: inconsistent match/noise/other structure; \lowterm{consensus set}: inliers supporting a model. Loop: sample minimal seed, fit model, count inliers under threshold $t$, keep largest consensus, refit on all inliers. For homography seed size $s=4$; residual after homogeneous division:
 \(
-\hat p'_i=\operatorname{dehom}(Hp_i),\qquad e_i=\|\hat p'_i-p'_i\|_2,\quad e_i<t\Rightarrow\text{inlier}.
+\hat p'_i=\operatorname{dehom}(Hp_i),\quad e_i=\|\hat p'_i-p'_i\|_2,\quad e_i<t\Rightarrow\text{inlier}.
 \)
 Trial count for success probability $P$, inlier ratio $w$, sample size $s$:
 \(
-N=\frac{\log(1-P)}{\log(1-w^s)},\qquad 1-P=(1-w^s)^N .
+N=\frac{\log(1-P)}{\log(1-w^s)},\quad 1-P=(1-w^s)^N .
 \)
 
 Tune sample size $s$, threshold $t$, success probability $P$, max trials $N$, min consensus size. Pros: simple/general, often works well; cons: poor with low inlier ratio ($w^s$ tiny), bad thresholds, degenerate/minimal samples.
@@ -188,18 +192,16 @@ Tune sample size $s$, threshold $t$, success probability $P$, max trials $N$, mi
 \section{L6 Vision Neural Networks}
 \subsection{CNN Basics}
 \lowterm{CNN biases}: local connectivity, weight sharing, spatial structure. \lowterm{Conv filter} $F\times F\times C$ slides over input; output depth = number of filters $K$.
-\[
-\begin{gathered}
+\(
 W_2=\frac{W_1-F+2P}{S}+1,\quad
 H_2=\frac{H_1-F+2P}{S}+1,\quad
 \#\theta=F^2CK+K.
-\end{gathered}
-\]
+\)
+
 Pooling: per-channel downsample, no parameters; \lowterm{max pooling} $W_2=(W_1-F)/S+1$. \lowterm{$1\times1$ conv} mixes channels only, useful for projection/bottleneck. \lowterm{ReLU} $f(x)=\max(0,x)$: efficient, non-saturating positive side, but dead ReLU/output not zero-centered.
 \key{FC vs Conv}: \lowterm{FC} flattens $HWC$ into a vector; params for $M$ outputs are $HWC\cdot M+M$, no spatial sharing. Conv keeps the grid, uses local receptive fields and shared weights. \lowterm{Sigmoid/tanh} ; \lowterm{LeakyReLU/ELU}
 
 \key{Initialization/normalization}: constant init breaks symmetry poorly; small random can vanish/explode. Xavier std $1/\sqrt{D_{in}}$.
-
 LayerNorm:
 \(
 \mu=\frac1d\sum_jx_j,\quad \sigma^2=\frac1d\sum_j(x_j-\mu)^2,\quad y_j=\gamma\frac{x_j-\mu}{\sqrt{\sigma^2+\epsilon}}+\beta.
@@ -266,7 +268,7 @@ DINO's ViT attention maps often localize object regions without labels. \lowterm
 \subsection{JEPA}
 \lowterm{JEA} aligns embeddings $s_x=Enc_x(x),s_y=Enc_y(y)$. \lowterm{JEPA} predicts target representation:
 \(
-\hat s_y=Pred(Enc_x(x),z),\qquad \mathcal L=\|\hat s_y-s_y\|^2.
+\hat s_y=Pred(Enc_x(x),z),\quad \mathcal L=\|\hat s_y-s_y\|^2.
 \)
 Not pixel reconstruction; predicts abstract representation and avoids irrelevant texture. Because $Enc_y$ is not invertible, prediction in representation space need not reconstruct full $y$. \lowterm{H-JEPA} passes latents hierarchically to predict more abstract/longer-term structure. \lowterm{Collapse}: all inputs map to constant; \lowterm{SIGReg} regularizes latent statistics to avoid collapse.
 
@@ -343,7 +345,7 @@ cost = class + L1 box + GIoU. Matching encourages one prediction per GT, reducin
 
 Segmentation metrics:
 \(
-IoU_c=\frac{TP_c}{TP_c+FP_c+FN_c},\qquad mIoU=\frac1C\sum_cIoU_c.
+IoU_c=\frac{TP_c}{TP_c+FP_c+FN_c},\quad mIoU=\frac1C\sum_cIoU_c.
 \)
 
 \lowterm{Upsampling}: interpolation, transposed convolution (linear operator transpose, not inverse), max unpooling with switches, resize+conv to reduce checkerboard. Stride-2 transposed conv can be viewed as inserting zero rows/cols then convolving with flipped kernel; uneven overlap causes checkerboard. \lowterm{DeconvNet}: encoder-decoder; \lowterm{U-Net} concatenates encoder features with decoder features and predicts at the end; \lowterm{FPN}: top-down + lateral connections to semantic pyramid.
@@ -445,7 +447,7 @@ z_t=\alpha_t x+\sigma_t\epsilon,\quad \mathrm{SNR}=\alpha_t^2/\sigma_t^2,\quad \
 Equivalent targets: clean $x$, noise $\epsilon$, score $s_t(z)=-\E[\epsilon|z_t=z]/\sigma_t$, velocity/path derivative $v_t=\dot\alpha_tx+\dot\sigma_t\epsilon$, denoiser $D(z_t)=\E[x|z_t]$. \lowterm{Weighting and schedule} can be expressed in SNR/log-SNR coordinates; epsilon-prediction is not uniform in SNR, log-SNR makes interpretation cleaner.
 \key{Forward paths}: VE/EDM $x_t=x_0+\sigma_t\epsilon$; VP/DDPM $x_t=\alpha_tx_0+\sigma_t\epsilon,\alpha_t^2+\sigma_t^2=1$; Flow Matching $x_t=(1-t)x_0+t\epsilon$. Only VP keeps variance normalized. \key{VLB weight}: in $x_0$ prediction, DDPM VLB weights each step by SNR drop,
 \(
-L_{t-1}\propto (r_{t-1}-r_t)\|D_\theta(x_t,t)-x_0\|^2,\qquad r=\mathrm{SNR}.
+L_{t-1}\propto (r_{t-1}-r_t)\|D_\theta(x_t,t)-x_0\|^2,\quad r=\mathrm{SNR}.
 \)
 \key{Training design}: choose path, prediction target $(\epsilon,x_0,s,v)$, objective weight $w(\lambda)$, and noise proposal/schedule $q(\lambda)$; Monte Carlo estimator uses weight $w/q$. Slides compare uniform, EDM/sigmoid, and Min-SNR weighting; monotone weighted objectives can be rewritten as mixtures of ELBOs on Gaussian-noise-augmented data.
 
@@ -480,7 +482,7 @@ x_i=\mu_i(x_{<i})+\sigma_i(x_{<i})z_i,\quad
 \)
 \lowterm{Unconditional guidance}: ramp strength over order index,
 \(
-\tilde\mu_t^i=(1+w_i)\mu_t^i(1)-w_i\mu_t^i(\tau),\qquad
+\tilde\mu_t^i=(1+w_i)\mu_t^i(1)-w_i\mu_t^i(\tau),\quad
 w_i=\frac{i}{T-1}w.
 \)
 
@@ -502,9 +504,9 @@ W(p_{\text{data}},p_G)=
 =\sup_{\|f\|_L\le1}\E_{x\sim p_{\text{data}}}f(x)-\E_{x\sim p_G}f(x),
 \)
 with 1-Lipschitz critic, giving useful gradients even for non-overlapping supports. \lowterm{RpGAN}: compares paired real/fake scores, $\E_{z,x}[f(D(G(z))-D(x))]$; each fake competes with real samples, so single-mode collapse still loses to other real modes. \lowterm{R3GAN}: adds principled R1/R2-style regularization to stabilize dynamics. \lowterm{ADD}: uses adversarial loss for diffusion distillation, $\mathcal L_{\rm student}=\mathcal L_{\rm distill}+\lambda\mathcal L_{\rm adv}$, where $\mathcal L_{\rm distill}$ comes from diffusion teacher. AR factorizes exact likelihood:
-\[
+\(
 p(x)=\prod_{i=1}^N p(x_i|x_{<i}),
-\]
+\)
 stable MLE/cross-entropy but serial $O(N)$ sampling and ordering bias. Image AR tokenizes pixels/patches/codebook tokens; Transformer provides long-range context. \key{AR evolution}: \lowterm{RIDE} is a raw-pixel density estimator with spatial LSTMs, but recurrent state forces serial training/sampling. \lowterm{PixelRNN} also models raw pixels sequentially; \lowterm{PixelCNN} uses masked convolution so training is parallel over pixels but sampling remains sequential. \lowterm{VQ-VAE} shortens image sequence via discrete codebook tokens. Loss has reconstruction + codebook + commitment terms; straight-through estimator copies gradient through nearest-code lookup. \lowterm{JetFormer} soft tokens use invertible flow tokenizer + AR Transformer, preserving continuous information and exact likelihood more directly than hard codebooks.
 Masked/flexible-order generation predicts masked tokens in iterative refinement; faster than AR, useful for editing/inpainting, likelihood often approximate or schedule-dependent. \key{Masked AR}: \lowterm{MaskGIT} uses VQGAN tokenizer + bidirectional Transformer; train by masking random token subset and cross-entropy on masked tokens only. Iterative decoding predicts all masked positions in parallel, samples tokens, keeps high-confidence ones, and follows a mask schedule; steps drop from $O(N)$ to about $8$--$12$, but bidirectional attention cannot use KV cache. \lowterm{RandAR}: random-order causal generation adds position instruction tokens, allowing KV-cache and parallel decoding of multiple requested positions while avoiding fixed raster order. 
 \end{multicols*}
