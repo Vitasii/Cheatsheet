@@ -61,7 +61,7 @@
 
 \subsection{MLP and Backprop}
 \key{Layer}: $h^{(0)}=x$, $z^{(\ell)}=W^{(\ell)}h^{(\ell-1)}+b^{(\ell)}$, $h^{(\ell)}=\phi(z^{(\ell)})$. Batch code convention often uses $X\in\R^{B\times n}$, $Z=XW+b$, $W\in\R^{n\times m}$.
-\key{Backprop}: define $\delta^{(\ell)}=\partial L/\partial z^{(\ell)}$:
+\key{Backprop}: for $y=f(x)$ with Jacobian $J=\partial y/\partial x$, chain rule gives $\nabla_xL=J^\top\nabla_yL$. Define $\delta^{(\ell)}=\partial L/\partial z^{(\ell)}$:
 \[
 \partial_{W^{(\ell)}}L=\delta^{(\ell)}(h^{(\ell-1)})^\top,\quad
 \partial_{b^{(\ell)}}L=\delta^{(\ell)},
@@ -69,7 +69,7 @@
 \[
 \delta^{(\ell-1)}=((W^{(\ell)})^\top\delta^{(\ell)})\odot\phi'(z^{(\ell-1)}).
 \]
-\key{Activation}: sigmoid/tanh saturate; ReLU $\max(0,z)$ keeps positive-side gradient; ELU/smooth variants improve negative side. \lowterm{Subgradient}: ReLU at $0$ uses any value in $[0,1]$ by convention.
+\key{Activation}: $\tanh(x)=\frac{e^{2x}-1}{e^{2x}+1}$; sigmoid/tanh saturate; ReLU $\max(0,z)$ keeps positive-side gradient; ELU/smooth variants improve negative side. \lowterm{Subgradient}: ReLU at $0$ uses any value in $[0,1]$ by convention.
 
 \subsection{CNN}
 \key{Motivation}: locality + weight sharing. Convolution:
@@ -84,16 +84,17 @@ W'=\lfloor(W+2P-K_w)/S\rfloor+1.
 Params $K_hK_wC_{\rm in}C_{\rm out}+C_{\rm out}$. \lowterm{Scanning MLP}: same detector slides across space. \lowterm{Pooling}: max/avg reduces spatial size and jitter. \lowterm{Padding}: keeps boundary info; same padding for odd kernel uses $P=(K-1)/2$.
 
 \subsection{Optimization}
-\key{GD}: $x_{k+1}=x_k-\eta_k\nabla f(x_k)$. If $\nabla f$ is $L$-Lipschitz:
+\key{GD/SGD}: full-batch GD uses all data gradient; SGD uses one sample noisy gradient; mini-batch uses $B$ samples to trade variance vs. throughput. $x_{k+1}=x_k-\eta_k\nabla f(x_k)$. $L$-smooth means gradient Lipschitz:
+$\|\nabla f(x)-\nabla f(y)\|\le L\|x-y\|$; if twice differentiable, $\|\nabla^2f(x)\|_{\rm op}\le L$ (convex: $0\preceq\nabla^2f(x)\preceq LI$). Then
 \[
 f(y)\le f(x)+\nabla f(x)^\top(y-x)+\frac L2\|y-x\|^2,
 \]
-so $0<\eta<2/L$ decreases the upper bound. \key{Newton}: from quadratic Taylor,
+\lowterm{Strong convexity}: $f(y)\ge f(x)+\nabla f(x)^\top(y-x)+\frac\mu2\|y-x\|^2$; with $L$-smooth and twice differentiable, $\mu I\preceq\nabla^2f(x)\preceq LI$. GD has linear convergence with $k=O(\kappa\log(1/\epsilon))$, $\kappa=L/\mu$. Thus $0<\eta<2/L$ decreases the smooth upper bound. \key{Newton}: from quadratic Taylor,
 \[
 x_{k+1}=x_k-\eta[\nabla^2f(x_k)]^{-1}\nabla f(x_k).
 \]
-\key{Momentum}: $v_{k+1}=\beta v_k+g_k$, $x_{k+1}=x_k-\eta v_{k+1}$. \key{Nesterov}: compute gradient at lookahead $x_k+\beta(x_k-x_{k-1})$.
-\key{AdaGrad}: $s_k=s_{k-1}+g_k^2$, $x_{k+1}=x_k-\eta g_k/(\sqrt{s_k}+\epsilon)$; may decay too fast. \key{RMSProp}: $s_k=\rho s_{k-1}+(1-\rho)g_k^2$. \key{Adam}:
+\key{Momentum}: $\Delta x^k=\beta\Delta x^{k-1}-\eta\nabla f(x^k)$, $x^{k+1}=x^k+\Delta x^k$. \key{Nesterov}: compute gradient at lookahead $x_k+\beta(x_k-x_{k-1})$.
+\key{Adaptive LR}: rescale each coordinate, helping ill-conditioned optimization. \key{AdaGrad}: $s_k=s_{k-1}+g_k^2$, $x_{k+1}=x_k-\eta g_k/(\sqrt{s_k}+\epsilon)$; rarely updated dims have smaller $s_{k,i}$ and larger effective LR; may decay too fast. \key{RMSProp}: $s_k=\rho s_{k-1}+(1-\rho)g_k^2$. \key{Adam}:
 \[
 m_k=\beta_1m_{k-1}+(1-\beta_1)g_k,\quad v_k=\beta_2v_{k-1}+(1-\beta_2)g_k^2,
 \]
@@ -103,11 +104,16 @@ x_{k+1}=x_k-\eta\hat m_k/(\sqrt{\hat v_k}+\epsilon),\quad
 \]
 
 \subsection{Regularization and Architectures}
-\lowterm{Dropout}: randomly zero units, approximates ensemble and reduces co-adaptation. \lowterm{Weight decay}: add $\lambda\|\theta\|^2$. \lowterm{Gradient clipping}: $g\leftarrow g\min(1,\tau/\|g\|)$.
+\lowterm{Dropout}: randomly zero units, prevents co-adaptation/reliance on particular neurons or weights, approximates ensemble/implicit regularization (often L2-like). Scaling: inverted dropout divides by keep prob $\alpha$ at train and inference unchanged; standard dropout leaves train unchanged and multiplies activations by $\alpha$ at inference. \lowterm{Early stopping}: monitor held-out validation; stop when training improves but validation worsens. \lowterm{Weight decay}: L2 regularization stabilizes weights,
+$L_{\rm reg}(w)=L_{\rm loss}(w)+\alpha\|w\|_2^2$. \lowterm{PCA color jitter}: add $P(\alpha\odot\lambda)$ to RGB channels, $\alpha_i\sim\N(0,0.1)$, simulating lighting/color changes. \lowterm{Gradient clipping}: $g\leftarrow g\min(1,\tau/\|g\|)$.
 \key{BatchNorm}: $\mu_B=\frac1B\sum_i z_i$, $\sigma_B^2=\frac1B\sum_i(z_i-\mu_B)^2$,
 \[
 \hat z_i=\gamma\frac{z_i-\mu_B}{\sqrt{\sigma_B^2+\epsilon}}+\beta.
 \]
+\key{BN backward}: if $u_i=(z_i-\mu_B)/\sqrt{\sigma_B^2+\epsilon}$, then
+$\frac{\partial L}{\partial z_i}=\frac{\partial L}{\partial u_i}\frac1{\sqrt{\sigma_B^2+\epsilon}}+\frac{\partial L}{\partial\sigma_B^2}\frac{2(z_i-\mu_B)}{B}+\frac{\partial L}{\partial\mu_B}\frac1B$.
+\key{BN inference}: no mini-batch training distribution; use running stats
+$\mu_{\rm run}\approx\frac1{N_{\rm batch}}\sum_b\mu_B^{(b)}$, $\sigma_{\rm run}^2\approx\frac1{N_{\rm batch}}\sum_b\frac{B}{B-1}\sigma_B^2(b)$.
 \key{LayerNorm}: normalize hidden dimension inside one sample; better for sequence models. \key{ResNet}: $h_{\ell+1}=h_\ell+F(h_\ell)$, residual path eases optimization. \key{DenseNet}: concatenate previous features. \key{FCN}: replace fully connected layer by convolution for dense prediction.
 
 \section{L4 Energy-Based Models}
@@ -123,34 +129,58 @@ State $y_i\in\{-1,1\}$, local field $h_i=\sum_{j\ne i}w_{ij}y_j+b_i$. Update fli
 \[
 E(y)=-\sum_{i<j}w_{ij}y_iy_j-\sum_i b_iy_i=-\frac12y^\top Wy-b^\top y.
 \]
-Asynchronous flip changes energy by $\Delta E=2y_ih_i$; if $y_ih_i<0$, energy decreases. Finite states imply convergence to a local minimum. \key{Hebbian storage}: $w_{ij}=\frac1P\sum_p y_i^py_j^p$, $w_{ii}=0$. Multiple patterns cause \lowterm{spurious minima}; capacity is limited, roughly linear in neuron count for stable random memories.
-\key{Optimization view}: desired patterns should be valleys; short-run evolution can raise undesired valleys by contrastive updates.
+Asynchronous flip changes energy by $\Delta E=2y_ih_i$; if $y_ih_i<0$, energy decreases. Finite states imply convergence to a local minimum. \key{Hebbian storage}: for $K$ patterns, $w_{ij}=\frac1K\sum_{p=1}^K y_i^py_j^p$, $w_{ii}=0$; stability sufficient condition $K\le N/(4\log N)$ for random patterns. Multiple patterns cause \lowterm{spurious minima}.
+\key{Optimization view}: make desired patterns valleys and undesired states high energy. For $E(y)=-\frac12y^\top Wy$, objective $\min_W\sum_{y\in P}E(y)-\sum_{y'\notin P}E(y')$ gives contrastive update
+$W\leftarrow W+\eta(\E_{y\in P}[yy^\top]-\E_{y'}[y'y'^\top])$; cannot enumerate exponential state space, so sample $y\in P$, initialize $y'$ from desired pattern, run $2$--$4$ dynamics steps, update with $yy^\top-y'y'^\top$.
 
 \subsection{Boltzmann Machine}
 \key{Stochastic Hopfield}: $p(y)\propto e^{-E(y)}$. Conditional Gibbs update for $\{-1,1\}$ units:
 \[
-P(y_i=1|y_{\neg i})=\sigma(2h_i).
+h_i=\sum_jw_{ij}y_j+b_i,\quad
+\log\frac{P(y_i=1|y_{\neg i})}{P(y_i=-1|y_{\neg i})}=2h_i,\quad P(y_i=1|y_{\neg i})=\sigma(2h_i).
 \]
-Temperature $T$: $p_T(y)\propto e^{-E(y)/T}$; annealing lowers $T$ from exploration to exploitation. \key{MLE gradient}:
+\key{Stochastic evolution}: initialize $y^{(0)}$, Gibbs-sample coordinates $y_i(t+1)\sim\operatorname{Bernoulli}(\sigma(z_i(t)))$ for $P(y_i=1)$; recover stored pattern from tail samples by $\hat y_i=\mathbf1[\frac1M\sum_{t=L-M+1}^Ly_i(t)>0]$ (majority/sign).
+\key{Annealing}: $p_T(y)\propto e^{-E(y)/T}$, sample $y_i(T)\sim\operatorname{Bernoulli}(\sigma(z_i(T)/T))$, then $T\leftarrow\alpha T$; lower $T$ shifts exploration to exploitation. \key{BM MLE}: for $E(y)=-\frac12y^\top Wy$,
 \[
-\nabla_{w_{ij}}\log p_\theta(y)=y_iy_j-\E_{p_\theta}[y_iy_j].
+P(y)=\frac{e^{\frac12y^\top Wy}}{\sum_{y'}e^{\frac12y'^\top Wy'}},\quad
+L(W)=\frac1{N_P}\sum_{y\in P}\frac12y^\top Wy-\log\sum_{y'}e^{\frac12y'^\top Wy'}.
 \]
-Learning = \lowterm{positive phase} data correlation minus \lowterm{negative phase} model correlation. With hidden $h$:
 \[
-\nabla L=\E_{p(h|v_{\rm data})}[y_iy_j]-\E_{p(v,h)}[y_iy_j].
+\begin{aligned}
+\nabla_{w_{ij}}L&=\frac1{N_P}\sum_{y\in P}y_iy_j-\E_{p_W}[y_iy_j]\\
+&\approx\frac1{N_P}\sum_{y\in P}y_iy_j-\frac1M\sum_{y'\in S}y'_iy'_j,\quad
+w_{ij}\leftarrow w_{ij}+\eta\nabla_{w_{ij}}L.
+\end{aligned}
+\]
+Learning = \lowterm{positive phase} data correlation minus \lowterm{negative phase} model correlation. With hidden $h$, condition on visible data $v$ and average over $h\mid v$:
+\[
+\nabla_{w_{ij}}L(W)=\frac1{|P|}\sum_{v\in P}\E_{h\mid v}[y_iy_j]-\E_{y'\sim P_W}[y'_iy'_j],\quad
+w_{ij}\leftarrow w_{ij}+\eta\nabla_{w_{ij}}L.
 \]
 
 \subsection{RBM and Contrastive Divergence}
-\lowterm{RBM}: bipartite $v,h$; no visible-visible or hidden-hidden edges:
+\lowterm{RBM}: visible $v$ and hidden $h$ form a bipartite graph; no within-layer edges:
 \[
 E(v,h)=-v^\top Wh-b^\top v-c^\top h.
 \]
-Conditionals factorize:
+Layer-wise Gibbs updates factorize:
 \[
-P(h_j=1|v)=\sigma(c_j+W_{:j}^\top v),\quad
-P(v_i=1|h)=\sigma(b_i+W_{i:}h).
+\begin{aligned}
+z^h_j&=c_j+\sum_iW_{ij}v_i, & P(h_j=1\mid v)&=\sigma(z^h_j),\\
+z^v_i&=b_i+\sum_jW_{ij}h_j, & P(v_i=1\mid h)&=\sigma(z^v_i).
+\end{aligned}
 \]
-\key{CD-$k$}: start at data $v^{(0)}$, run $k$ Gibbs steps, update $W\propto v^{(0)}h^{(0)\top}-v^{(k)}h^{(k)\top}$.
+\key{Iterative sampling}: alternate $h\sim P(h|v)$ and $v\sim P(v|h)$; after mixing, $(v^{(\infty)},h^{(\infty)})\sim P_W$. With $K$ hidden samples per data and $M$ free samples:
+\[
+\widehat{\nabla}_{W_{ij}}L(W)=
+\frac1{N_PK}\sum_{v\in P}\sum_{k=1}^{K}v_i^{(0)}h_{j,k}^{(0)}
+-\frac1M\sum_{m=1}^{M}v_{i,m}^{(\infty)}h_{j,m}^{(\infty)}.
+\]
+\key{CD-1} replaces the long negative chain by one reconstruction:
+\[
+\nabla_{W_{ij}}L\approx\frac1{N_P}\sum_{v\in P}
+\left(v_i^{(0)}h_j^{(0)}-v_i^{(1)}h_j^{(1)}\right).
+\]
 
 \subsection{Sampling}
 \key{Inverse CDF}: sample $u\sim U[0,1]$, choose category by cumulative mass. \key{Box-Muller}: Gaussian from uniform:
@@ -158,11 +188,15 @@ P(v_i=1|h)=\sigma(b_i+W_{i:}h).
 z_1=\sqrt{-2\log u_1}\cos(2\pi u_2),\quad z_2=\sqrt{-2\log u_1}\sin(2\pi u_2).
 \]
 \key{Importance sampling}: $\E_p[f(x)]=\E_q[f(x)p(x)/q(x)]$. Good $q$ must cover $p$'s high-mass region.
-\key{MCMC}: Markov chain with stationary $\pi$. Detailed balance $\pi(x)T(x\to x')=\pi(x')T(x'\to x)$ implies stationarity. \key{MH}: proposal $q(x'|x)$, accept
+\key{MCMC}: Markov chain with stationary $\pi$. Detailed balance $\pi(x)T(x\to x')=\pi(x')T(x'\to x)$ implies stationarity. Uniform minorization
+\[
+\min_{z,z':\,\pi(z')>0}\frac{T(z\to z')}{\pi(z')}=\delta>0
+\]
+is a strong sufficient condition for uniform ergodicity. \key{MH}: proposal $q(x'|x)$, accept
 \[
 \alpha=\min\left(1,\frac{\pi(x')q(x|x')}{\pi(x)q(x'|x)}\right).
 \]
-For EBM, partition $Z$ cancels. \key{Gibbs}: update one conditional exactly. \key{SGLD}: $x_{t+1}=x_t-\frac{\eta}{2}\nabla_xE_\theta(x_t)+\sqrt{\eta}\xi_t$.
+For EBM, partition $Z$ cancels. \key{Gibbs}: update one conditional exactly; as MH, use $q(s_i\to s_i')=p(s_i'\mid s_{j\ne i})$, so accept prob. $=1$. \key{SGLD}: $x_{t+1}=x_t-\frac{\eta}{2}\nabla_xE_\theta(x_t)+\sqrt{\eta}\xi_t$.
 
 \section{L5 Generative Adversarial Networks}
 \subsection{Implicit Generative Model}
@@ -181,19 +215,50 @@ V(D^\star,G)=-\log4+2\,{\rm JSD}(p_{\rm data}\|p_g).
 Non-saturating generator loss $-\E_z\log D(G(z))$ gives stronger gradients.
 
 \subsection{Evaluation and Failure Modes}
-\lowterm{Mode collapse}: generator covers few modes. \lowterm{Training instability}: moving target game; discriminator too strong $\Rightarrow$ weak generator gradient. \lowterm{IS}: rewards confident/diverse ImageNet predictions, but blind to intra-class artifacts. \lowterm{FID}: compare Gaussian feature statistics:
+\lowterm{Mode collapse}: generator covers few modes. \key{Sample diversity}: for multimodal $p$, forward KL is mode-covering, while reverse KL and JSD can be mode-seeking/collapse:
 \[
-\|\mu_r-\mu_g\|^2+\tr(\Sigma_r+\Sigma_g-2(\Sigma_r\Sigma_g)^{1/2}).
+\begin{aligned}
+\KL(p\|q)&=\E_p\log\frac{p}{q},\quad
+\KL(q\|p)=\E_q\log\frac{q}{p},\\
+{\rm JSD}(p\|q)&=\frac12\KL(p\|m)+\frac12\KL(q\|m),\quad m=\frac{p+q}{2}.
+\end{aligned}
 \]
+\lowterm{Training instability}: moving target game can oscillate; if $D$'s task is too simple/strong, $G$ gets vanishing or weak gradients. \key{Inception Score} uses classifier $f(y|x)$:
+\[
+{\rm IS}=\exp\!\left(\E_{x\sim G}\KL(f(y|x)\|p_f(y))\right),\quad
+p_f(y)=\E_{x\sim G}[f(y|x)].
+\]
+Since $\E_x\KL(f(\cdot|x)\|p_f)=-\E_xH(f(\cdot|x))+H(p_f)$, high IS needs confident images (low conditional entropy) and diverse classes (high marginal entropy). IS never uses $p_{\rm data}$, so it cannot detect memorization and is blind to intra-class artifacts. \key{FID}: use Inception-v3 pool3 2048-d features; estimate Gaussian statistics $(\mu_p,\Sigma_p)$ for $p_{\rm data}$ and $(\mu_G,\Sigma_G)$ for $p_G$:
+\[
+{\rm FID}=\|\mu_p-\mu_G\|_2^2+
+\tr\!\left(\Sigma_p+\Sigma_G-2(\Sigma_p\Sigma_G)^{1/2}\right).
+\]
+Lower FID is better.
+
+\subsection{GAN Training Techniques}
+\key{Feature Matching}: train $G$ to match statistics of discriminator features instead of only fooling $D$:
+\[
+L_G(\theta)=\left\|
+\E_{\hat x\sim G_\theta}[f(\hat x;\phi)]
+-\E_{x\sim p_{\rm data}}[f(x;\phi)]
+\right\|_2^2.
+\]
+Here $f(x;\phi)$ is an internal feature of $D$, often the final activation layer before classification.
+\key{Other tricks}: One-Sided Label Smoothing; Historical Averaging; Minibatch Discrimination; Virtual Batch Normalization.
 
 \subsection{WGAN Family}
 JSD can be flat when supports do not overlap. Wasserstein-1:
 \[
 W(p,q)=\sup_{\|f\|_L\le1}\E_{x\sim p}f(x)-\E_{x\sim q}f(x).
 \]
-WGAN critic maximizes $\E_{p_{\rm data}}D(x)-\E_zD(G(z))$. \lowterm{Lipschitz constraint}: weight clipping, spectral norm, or WGAN-GP
+WGAN objective:
 \[
-\lambda\E_{\hat x}(\|\nabla_{\hat x}D(\hat x)\|_2-1)^2.
+\min_G\max_{D:\|D\|_L\le1}\ \E_{x\sim p_{\rm data}}[D(x)]-\E_{\hat x\sim p_G}[D(\hat x)].
+\]
+\lowterm{Lipschitz constraint}: weight clipping, spectral norm, or WGAN-GP. For WGAN-GP, sample $\tilde x=(1-\epsilon)x+\epsilon\hat x$, $\epsilon\sim U(0,1)$, between real $x$ and fake $\hat x$:
+\[
+\max_D\ \E_{x\sim p_{\rm data}}D(x)-\E_{\hat x\sim p_G}D(\hat x)
+-\lambda\E_{\tilde x}\left(\|\nabla_{\tilde x}D(\tilde x)\|_2-1\right)^2.
 \]
 \key{DCGAN}: conv/deconv, batchnorm, stable architecture. \key{BigGAN}: scale + class conditioning + truncation trick. \key{GigaGAN}: text-to-image GAN scaling. \key{R3GAN}: regularized robust objective.
 
