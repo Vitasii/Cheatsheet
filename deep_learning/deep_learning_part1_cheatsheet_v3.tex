@@ -1,0 +1,504 @@
+\documentclass{article}
+\usepackage[landscape, margin=0.28cm]{geometry}
+\usepackage{multicol}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{enumitem}
+\usepackage[compact]{titlesec}
+\usepackage{lmodern}
+\usepackage{mathpazo}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage{bm}
+\usepackage{ctex}
+\usepackage{xcolor}
+\pagenumbering{gobble}
+\definecolor{myblue}{RGB}{200, 0, 0} 
+
+\titleformat{\section}{\normalfont\fontsize{9.2pt}{10pt}\bfseries\color{myblue}}{\thesection}{0.18em}{}
+\titleformat{\subsection}{\normalfont\fontsize{8.2pt}{9pt}\bfseries\color{myblue}}{\thesubsection}{0.18em}{}
+\titleformat{\subsubsection}{\normalfont\fontsize{7.4pt}{8pt}\bfseries\color{myblue}}{\thesubsubsection}{0.18em}{}
+\titlespacing*{\section}{0pt}{2pt}{1pt}
+\titlespacing*{\subsection}{0pt}{1.5pt}{0.5pt}
+\titlespacing*{\subsubsection}{0pt}{1pt}{0pt}
+\setlength{\columnsep}{0.32cm}
+\setlength{\columnseprule}{0.18pt}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\setlist[itemize]{nosep, leftmargin=*, label=\textbullet}
+\setlist[enumerate]{nosep, leftmargin=*}
+\allowdisplaybreaks
+\setlength{\abovedisplayskip}{0.5pt}
+\setlength{\belowdisplayskip}{0.5pt}
+
+\newcommand{\key}[1]{\textbf{#1}}
+\newcommand{\lowterm}[1]{\textbf{\underline{#1}}}
+\newcommand{\term}[1]{\textit{#1}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\N}{\mathcal{N}}
+\newcommand{\KL}{\mathrm{KL}}
+\newcommand{\1}{\mathbf 1}
+\newcommand{\dd}{\mathrm{d}}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator{\softmax}{softmax}
+\DeclareMathOperator{\sigmoid}{sigmoid}
+\DeclareMathOperator{\tr}{tr}
+
+\begin{document}
+\tiny
+\begin{multicols*}{4}
+
+\section{L2--3 Supervised Learning}
+\subsection{Classification and Loss}
+\key{ERM}: population risk $\theta^\star=\arg\min_\theta\E_{x\sim P}\operatorname{err}(f(x;\theta),y(x))$; empirical risk $\hat\theta=\arg\min_\theta\frac1N\sum_i\operatorname{err}(f(x_i;\theta),y_i)$. \key{Binary logistic}: $p(y=1|x)=\sigma(w^\top x+b)$,
+\[
+\ell=-y\log p-(1-y)\log(1-p),\quad \frac{\partial\ell}{\partial z}=p-y.
+\]
+\key{Multi-class}: logits $z\in\R^K$, $p_k=e^{z_k}/\sum_j e^{z_j}$,
+\[
+\ell(z,y)=-\log p_y=-z_y+\log\sum_j e^{z_j},\quad
+\frac{\partial\ell}{\partial z_k}=p_k-\1[k=y].
+\]
+\lowterm{One-hot CE}: $-\sum_k y_k\log p_k$.
+
+\subsection{MLP and Backprop}
+\key{Layer}: $h^{(0)}=x$, $z^{(\ell)}=W^{(\ell)}h^{(\ell-1)}+b^{(\ell)}$, $h^{(\ell)}=\phi(z^{(\ell)})$. Batch code convention often uses $X\in\R^{B\times n}$, $Z=XW+b$, $W\in\R^{n\times m}$.
+\key{Backprop}: define $\delta^{(\ell)}=\partial L/\partial z^{(\ell)}$:
+\[
+\partial_{W^{(\ell)}}L=\delta^{(\ell)}(h^{(\ell-1)})^\top,\quad
+\partial_{b^{(\ell)}}L=\delta^{(\ell)},
+\]
+\[
+\delta^{(\ell-1)}=((W^{(\ell)})^\top\delta^{(\ell)})\odot\phi'(z^{(\ell-1)}).
+\]
+\key{Activation}: sigmoid/tanh saturate; ReLU $\max(0,z)$ keeps positive-side gradient; ELU/smooth variants improve negative side. \lowterm{Subgradient}: ReLU at $0$ uses any value in $[0,1]$ by convention.
+
+\subsection{CNN}
+\key{Motivation}: locality + weight sharing. Convolution:
+\[
+y_{i,j,o}=\sum_{u,v,c}K_{u,v,c,o}x_{i+u,j+v,c}+b_o.
+\]
+For input $H\times W\times C_{\rm in}$, kernel $K_h\times K_w$, padding $P$, stride $S$:
+\[
+H'=\lfloor(H+2P-K_h)/S\rfloor+1,\quad
+W'=\lfloor(W+2P-K_w)/S\rfloor+1.
+\]
+Params $K_hK_wC_{\rm in}C_{\rm out}+C_{\rm out}$. \lowterm{Scanning MLP}: same detector slides across space. \lowterm{Pooling}: max/avg reduces spatial size and jitter. \lowterm{Padding}: keeps boundary info; same padding for odd kernel uses $P=(K-1)/2$.
+
+\subsection{Optimization}
+\key{GD}: $x_{k+1}=x_k-\eta_k\nabla f(x_k)$. If $\nabla f$ is $L$-Lipschitz:
+\[
+f(y)\le f(x)+\nabla f(x)^\top(y-x)+\frac L2\|y-x\|^2,
+\]
+so $0<\eta<2/L$ decreases the upper bound. \key{Newton}: from quadratic Taylor,
+\[
+x_{k+1}=x_k-\eta[\nabla^2f(x_k)]^{-1}\nabla f(x_k).
+\]
+$g_k=$ gradient on $x_k$. 
+\key{Momentum}: $v_{k+1}=\beta v_k+g_k$, $x_{k+1}=x_k-\eta v_{k+1}$. \key{Nesterov}: compute gradient at lookahead $x_k+\beta(x_k-x_{k-1})$.
+\key{AdaGrad}: $s_k=s_{k-1}+g_k^2$, $x_{k+1}=x_k-\eta g_k/(\sqrt{s_k}+\epsilon)$; may decay too fast. \key{RMSProp}: $s_k=\rho s_{k-1}+(1-\rho)g_k^2$. \key{Adam}:
+\[
+m_k=\beta_1m_{k-1}+(1-\beta_1)g_k,\quad v_k=\beta_2v_{k-1}+(1-\beta_2)g_k^2,
+\]
+\[
+x_{k+1}=x_k-\eta\hat m_k/(\sqrt{\hat v_k}+\epsilon),\quad
+\hat m_k=m_k/(1-\beta_1^k).
+\]
+
+\subsection{Regularization and Architectures}
+\lowterm{Dropout}: randomly zero units, approximates ensemble and reduces co-adaptation. \lowterm{Weight decay}: add $\lambda\|\theta\|^2$. \lowterm{Gradient clipping}: $g\leftarrow g\min(1,\tau/\|g\|)$.
+
+\key{BatchNorm}: $\mu_B=\frac1B\sum_i z_i$, $\sigma_B^2=\frac1B\sum_i(z_i-\mu_B)^2$,
+\(
+\hat z_i=\gamma\frac{z_i-\mu_B}{\sqrt{\sigma_B^2+\epsilon}}+\beta.
+\)
+
+\key{LayerNorm}: normalize hidden dimension inside one sample; better for sequence models. \key{ResNet}: $h_{\ell+1}=h_\ell+F(h_\ell)$, residual path eases optimization. \key{DenseNet}: concatenate previous features. \key{FCN}: replace fully connected layer by convolution for dense prediction.
+
+\section{L4 Energy-Based Models}
+\subsection{Energy View}
+\key{Generative modeling}: learn $P(X)$ or $P(X,y)=P(y)P(X|y)$ instead of $P(y|X)$. \lowterm{EBM}: unnormalized score via energy
+\[
+p_\theta(x)=\frac{e^{-E_\theta(x)}}{Z_\theta},\quad Z_\theta=\int e^{-E_\theta(x)}dx.
+\]
+Low energy means high probability; training and inference both need sampling or partition-function gradients. $\log p_\theta(x)=-E_\theta(x)-\log Z_\theta$, $\nabla_\theta\log p_\theta(x)=-\nabla_\theta E_\theta(x)-\frac{1}{Z_\theta}\nabla_\theta \left(\sum_{x'} e^{-E_\theta(x')}\right)=-\nabla_\theta E_\theta(x)+\E_{x'\sim p_\theta}[E_\theta(x')]$. 
+
+\subsection{Hopfield Network}
+State $y_i\in\{-1,1\}$, local field $h_i=\sum_{j\ne i}w_{ij}y_j+b_i$. Update flips if $y_ih_i<0$.
+\[
+E(y)=-\sum_{i<j}w_{ij}y_iy_j-\sum_i b_iy_i=-\frac12y^\top Wy-b^\top y.
+\]
+Asynchronous flip changes energy by $\Delta E=2y_ih_i$; if $y_ih_i<0$, energy decreases. Finite states imply convergence to a local minimum. \key{Hebbian storage}: $w_{ij}=\frac1P\sum_p y_i^py_j^p$, $w_{ii}=0$. Multiple patterns cause \lowterm{spurious minima}; capacity is limited, roughly linear in neuron count for stable random memories.
+
+\lowterm{Objective for $W$}: $W=\arg\min_W\left(\sum_{\in P} E(y)-\sum_{\notin P}E(y')\right)$. 
+\key{Optimization view}: desired patterns should be valleys; short-run evolution can raise undesired valleys by contrastive updates. 
+
+SGD update rule for $W$: $W\gets W-\eta\left(\E_{y\in P}[yy^\top]-\E_{y'}[y'y'^\top]\right)$, initialize $y'$ by a random desired pattern (in $P$), run evolution for a few timesteps.
+
+\subsection{Boltzmann Machine}
+\key{Stochastic Hopfield}: energy $E(y)$ as Hopfield, $p(y)=\frac{1}{Z}e^{-E(y)}\propto e^{-E(y)}$. 
+
+Conditional Gibbs update for $\{-1,1\}$ units:
+\[
+P(y_i=1|y_{\neg i})=\frac{1}{1+\exp(-\sum_j w_{ij}y_j-2b_i)}=\frac{1}{1+e^{-2h_i}}.
+\]
+
+Temperature $T$: $p_T(y)\propto e^{-E(y)/T}$; annealing lowers $T$ from exploration to exploitation. 
+
+\lowterm{BM Training}: maximize $L(W)=\sum_{y\in P}\log P_\theta(y)$, $\theta$ means  parameters. 
+\(
+\nabla_{w_{ij}}\log p_\theta(y)=y_iy_j-\E_{p_\theta}[y_iy_j],
+\)
+$\nabla_{w_{ij}}L=\E_{y\in P}[y_iy_j]-\E_{y'\sim p_\theta}[y'_iy'_j]
+=\frac{1}{|P|}\sum_{y\in P}y_iy_j-\E_{y'\sim p_\theta}[y'_iy'_j]$. 
+First term: compute average over $P$. Second term: sample from $p_\theta$, compute average. \key{Sample method}: random initialize $y(0)$, cycle over $i$ (coordinates) and sample from $P(y_i(t)|y_{\lnot i}(t))$, after convergence select the final $M$ states as samples. \key{Updating}: $w_{ij}\gets w_{ij}+\eta \nabla_{w_{ij}}L(W)$.
+Learning = \lowterm{positive phase} data correlation minus \lowterm{negative phase} model correlation. 
+
+\lowterm{With hidden neurons}: $y=(v,h)$
+\[
+\nabla_{w_{ij}} L=\frac{1}{|P|}\sum_{v\in P} \E_{h}[y_iy_j]-\E_{y'\sim p(v,h)}[y'_iy'_j].
+\]
+
+Boltzmann for classification: $y=(v,h,c)$, $c$: visible, one-hot vector
+
+
+\subsection{RBM and Contrastive Divergence}
+\lowterm{RBM}: bipartite $v,h$; no visible-visible or hidden-hidden edges:
+\(
+E(v,h)=-v^\top Wh-b^\top v-c^\top h.
+\)
+Conditionals factorize:
+\(
+P(h_j=1|v)=\sigma(c_j+\sum_{i}w_{ij}v_i),
+P(v_i=1|h)=\sigma(b_i+\sum_{j}w_{ij}h_j), \sigma(z)=\frac{1}{1+e^{-z}}
+\). Sampling: $v^{(0)}\to h^{(0)}\to v^{(1)}\to h^{(1)}\to\cdots$
+
+\lowterm{Maximum likelihood estimate}: $\nabla_{w_{ij}}L=\frac{1}{N_p}\sum_{v\in P}v_{0i}h_{0j}-\frac{1}{M}\sum v_{\infty i}h_{\infty j}$. Only 3 gibbs sampling steps needed: $\nabla_{w_{ij}}L=\frac{1}{N_p}\sum_{v\in P}v_{0i}h_{0j}-v_{1i}h_{j}$.
+
+\key{CD-$k$}: start at data $v^{(0)}$, run $k$ Gibbs steps, update $W\propto v^{(0)}h^{(0)\top}-v^{(k)}h^{(k)\top}$.
+
+\subsection{Sampling}
+\key{Inverse CDF}: sample $u\sim U[0,1]$, choose category by cumulative mass. \key{Box-Muller}: Gaussian from uniform:
+\[
+z_1=\sqrt{-2\log u_1}\cos(2\pi u_2),\quad z_2=\sqrt{-2\log u_1}\sin(2\pi u_2).
+\]
+\lowterm{Importance sampling}: $\E_p[f(x)]=\E_q[f(x)p(x)/q(x)]$. Good $q$ must cover $p$'s high-mass region.
+\lowterm{MCMC}: \key{Detailed balance} $\pi(x)T(x\to x')=\pi(x')T(x'\to x)$ implies stationarity of $\pi$. \key{Ergodic}: (intuitively) you can visit any desired state with positive probability from any state, ensure a unique stationary distribution. \key{Metropolis Hastings Algo.}: Construct Markov chain with stationary $\pi$ (desired distribution). Current $x$, draw $x'\sim q(x'|x)$ (called proposal), transist to $x'$ with prob. 
+\(
+\alpha=\min\left(1,\frac{\pi(x')q(x|x')}{\pi(x)q(x'|x)}\right),
+\)
+otherwise stays at $x$. 
+Choice of $q$: random proposal $q(x'|x)=$noise (e.g. Gaussian, then it relies on $|x-x'|$), then $q$ terms in $\alpha$ vanishes. 
+
+\key{For EBM, partition $Z$ cancels. }
+
+\lowterm{Gibbs}: sample a single coordinate per step. Acceeptance ratio always $1$. 
+
+\key{SGLD}: $x_{t+1}=x_t-\frac{\eta}{2}\nabla_xE_\theta(x_t)+\sqrt{\eta}\xi_t$.
+
+\section{L5 Generative Adversarial Networks}
+\subsection{Implicit Generative Model}
+Instead of density $p_\theta(x)$, learn sampler $x=G_\theta(z)$, $z\sim p_z$. Likelihood-free learning. Need differentiable distance between generated and real distributions. GAN learns this distance with a discriminator.
+
+\lowterm{GAN}: generator $G_\theta(z)$, $z\sim p(z)=N(0,I)$; discriminator $D_\phi(x)$, classify the data is from $p_{data}$ or $G_\theta$. Objective: $L=\min_\theta\max_\phi V(D_\phi,G_\theta)$, 
+\[
+V(D_\phi,G_\theta)=\E_{x\sim p_{\rm data}}\log D_\phi(x)+\E_{z\sim p_z}\log(1-D_\phi(G_\theta(z))).
+\]
+Dataset: $\{(x,1):x\sim p_{data}\}\cup\{(\hat{x},0):\hat{x}\sim G_\theta(z)\}$.
+
+Train $D$: $L(\phi)=\E_{x\sim p_{\rm data}}\log D_\phi(x)+\E_{z\sim p_z}\log(1-D_\phi(G(z)))$. 
+
+Train $G$: $L(\theta)=\E_{z\sim p(z)}[\log D_\phi(G_\theta(z))]$.
+
+For fixed $G$, the optimal $D$ is 
+\(
+D^\star(x)=\frac{p_{\rm data}(x)}{p_{\rm data}(x)+p_G(x)}.
+\) 
+Substitute:
+\(
+V(D^\star,G)=-\log4+2\,{\rm JSD}(p_{\rm data}\|p_g), 
+\)
+\lowterm{JSD}: ${\rm JSD}(p\|q)={\rm KL}(p\|\frac{p+q}{2})+{\rm KL}(q\|\frac{p+q}{2})$, $\geq 0$, $\sqrt{\rm JSD}$ satisfies triangular inequality
+
+Non-saturating generator loss $-\E_z\log D(G(z))$ gives stronger gradients.
+
+\subsection{Evaluation and Failure Modes}
+\lowterm{Mode collapse}: generator covers few modes (converges to a few samples). Intrinsic issue of JSD. \lowterm{Training instability}: moving target game; discriminator too strong $\Rightarrow$ weak generator gradient. \lowterm{IS}: rewards confident/diverse ImageNet predictions, but blind to intra-class artifacts. \lowterm{FID}:  Compute $\mu_p,\Sigma_p$ and $\mu_G,\Sigma_G$ for $p_{data},G(z)$ using inception v3 pool3 layer (2048-d), Compute Wasserstein distance between two Gaussians. compare Gaussian feature statistics:
+\(
+\|\mu_r-\mu_g\|^2+\tr(\Sigma_r+\Sigma_g-2(\Sigma_r\Sigma_g)^{1/2}).
+\)
+
+\subsection{WGAN Family}
+JSD can be flat when supports do not overlap. Wasserstein-1:
+\(
+W(p,q)=\sup_{\|f\|_L\le1}\E_{x\sim p}f(x)-\E_{x\sim q}f(x).
+\) 
+
+\lowterm{WGAN}: critic $f_\phi$, no $D$. 
+WGAN objective: subject to $|f_\phi(x)|_L\leq 1$, $L(\phi)=\E_{x\sim p_{data}}[f_\phi(x)]-\E_{x\sim p_G}[f_\phi(x)]$, $L(\theta)=\E_{x\sim G_\theta(z)}[f_\phi(x)]$.
+
+
+\lowterm{Lipschitz constraint}: weight clipping, spectral norm, or \key{WGAN-GP}: 
+$\tilde{x}\gets (1-\epsilon)x+\epsilon\hat{x}$, $\epsilon\sim {\rm Unif}(0,1)$, 
+\(
+L(\phi)=\E_{x\sim p_{data}}[f_\phi(x)]-\E_{\hat{x}\sim p_G}[f_\phi(\hat x)]+\lambda\E_{\tilde{x}}(\|\nabla_{\tilde x}f_\phi(\tilde x)\|_2-1)^2.
+\) 
+
+\key{DCGAN}: conv/deconv, batchnorm, stable architecture. \key{BigGAN}: scale + class conditioning + truncation trick. \key{GigaGAN}: text-to-image GAN scaling. \key{R3GAN}: regularized robust objective.
+
+\subsection{Variants and Applications}
+\key{Conditional GAN}: $G(z,c)$, $D(x,c)$. \key{Semi-supervised GAN}: discriminator has $K+1$ classes, $K$ real labels plus fake. \key{BiGAN/ALI}: learn encoder $E(x)$ with discriminator over $(x,z)$ pairs. Idea: $(z,G(z))$ and $(E(x),x)$ from same distribution. gives representation learning. \key{Pix2Pix}: paired image-to-image translation with conditional GAN + reconstruction loss. \key{CycleGAN}: unpaired translation using cycle consistency
+\(
+G:X\to Y,\quad F:Y\to X,\quad \|F(G(x))-x\|+\|G(F(y))-y\|.
+\)
+\key{DragGAN}: interactive image manipulation by optimizing latent/code with handle-point constraints.
+
+\section{L6 Flow and VAE}
+\subsection{Normalizing Flow}
+Invertible differentiable generator $x=G_\theta(z)$,  transform a simple distribution to the data distribution. 
+\(
+\log p_X(x)=\log p_Z(G^{-1}(x))+\log\left|\det\frac{\partial G^{-1}}{\partial x}\right|.
+\)
+
+Composition: $z_K=G(z_0)=f_K\circ\cdots\circ f_1(z_0)$, 
+$\log p_X(z_K)=\log p_Z(z_0)-\sum_k \log |\det \frac{\partial f_k}{\partial z_k}|$. 
+Flow design needs invertible layer, efficient inverse, efficient compute determinant of Jacobi. 
+
+\key{Coupling}: split $x=(x_a,x_b)$, to $(y_a,y_b)$, 
+\(
+y_a=x_a,\quad y_b=x_b\odot e^{s(x_a)}+t(x_a),\quad
+\log|\det J|=\sum s(x_a). 
+\)
+$s,t$: learnable. sometimes needs premutaion among coordinates or linear transformation.  
+
+\key{Glow}: invertible $1\times1$ convolution mixes channels; LU decomposition makes determinant cheap: $\log|\det W|=\sum_i\log|u_{ii}|$. \key{Dequantization}: add uniform noise to discrete pixels so continuous density is well-defined.
+\key{Continuous NF / Neural ODE}: $\frac{dz(t)}{dt}=f_\theta(z(t),t)$,
+\(
+\log p(z(t_1))=\log p(z(t_0))-\int_{t_0}^{t_1}\tr\left(\frac{\partial f_\theta}{\partial z(t)}\right)dt.
+\)
+
+\subsection{EM and Variational Inference}
+Latent-variable likelihood $\log p_\theta(x)=\log\sum_z p_\theta(x,z)$. Jensen:
+\[
+\log p_\theta(x)=\log\E_q\frac{p_\theta(x,z)}{q(z)}
+\ge \E_q\log p_\theta(x,z)+H(q)=\mathcal L(q,\theta).
+\]
+Gap:
+\(
+\log p_\theta(x)-\mathcal L(q,\theta)=\KL(q(z)\|p_\theta(z|x)).
+\) 
+EM: E-step $q(z)=p_{\theta^{old}}(z|x)$, M-step maximize $\E_q\log p_\theta(x,z)$.
+
+\subsection{VAE}
+Encoder $q_\phi(z|x)$, decoder $p_\theta(x|z)$, prior $p(z)$. 
+
+ELBO:
+\(
+\log p_\theta(x)\ge \E_{q_\phi(z|x)}[\log p_\theta(x|z)]-\KL(q_\phi(z|x)\|p(z)).
+\) In practice, $q_\phi(z|x)=\N(\mu_\phi(x),\sigma_\phi(x))$, $p_\theta(x|z)=N(\mu_\theta(z),\beta I)$. 
+Reparameterization:
+\(
+z=\mu_\phi(x)+\sigma_\phi(x)\odot\epsilon,\quad \epsilon\sim\N(0,I).
+\) 
+KL of Gaussian can be computed, here
+\(
+\KL(\N(\mu,\sigma^2I)\|\N(0,I))
+=\frac12\sum_i(\mu_i^2+\sigma_i^2-\log\sigma_i^2-1).
+\)
+
+\key{Terms}: reconstruction = data fidelity; KL = latent regularization. \key{PixelVAE/NVAE}: hierarchical latent variables improve global coherence and likelihood.
+
+\section{L7 Diffusion and Flow Matching}
+\subsection{DDPM}
+Forward:
+\(
+q(x_t|x_{t-1})=\N(\sqrt{\alpha_t}x_{t-1},\beta_tI),\beta_t=1-\alpha_t, \quad \bar\alpha_t=\prod_{s=1}^t\alpha_s.
+\)
+
+Closed form:
+\(
+q(x_t|x_0)=\N(\sqrt{\bar\alpha_t}x_0,(1-\bar\alpha_t)I),\quad
+x_t=\sqrt{\bar\alpha_t}x_0+\sqrt{1-\bar\alpha_t}\epsilon.
+\)
+
+Reverse: use $p_\theta(x_{t-1}|x_t)$ to estimate the prob, $p_\theta(0:T)=p(x_T)\prod_t p_\theta(x_{t-1}|x_t)$, $p(x_T)$ is gaussian prior. 
+
+ELBO $\log p_\theta(x_0)\geq \E_{x_{1:T}\sim q(\cdot|x_0)}[\log\frac{p_\theta(x_{0:T})}{q(x_{1:T}|x_0)}]$, use markovian and use tractable $q(x_{t-1}|x_t,x_0)$: $L=\E_q[\log\frac{p(x_T)}{q(x_T|x_0)}]+\E_q[\log p_\theta(x_0|x_1)]+\sum_{t=2}^T{\rm KL}(q(x_{t-1}|x_t,x_0)\|p_\theta(x_{t-1}|x_t))\text{(core of DDPM)}$. 
+
+Posterior $q(x_{t-1}|x_t,x_0)=\frac{1}{q(x_t|x_0)}q(x_t|x_{t-1},x_0)q(x_{t-1}|x_0)$, which is a Gaussian $N(\tilde\mu_t,\tilde\beta_tI)$. Let $x_t=\sqrt{\bar\alpha_t}x_0+\sqrt{1-\bar\alpha_t}\epsilon$, 
+\(
+\tilde\mu_t=\frac{\sqrt{\bar\alpha_{t-1}}\beta_t}{1-\bar\alpha_t}x_0+
+\frac{\sqrt{\alpha_t}(1-\bar\alpha_{t-1})}{1-\bar\alpha_t}x_t
+=\frac{1}{\sqrt{\alpha_t}}\left(x_t-\frac{1-\alpha_t}{\sqrt{1-\bar\alpha_t}}\epsilon\right),
+\tilde\beta_t=\frac{1-\bar\alpha_{t-1}}{1-\bar\alpha_t}\beta_t.
+\) 
+
+Predict noise $\epsilon_\theta(x_t,t)$: $p_\theta(x_{t-1}|x_t)=\N(\mu_\theta(x_t,t),\sigma_t^2I)$, $\mu_\theta(x_t,t)=\frac{1}{\sqrt{\alpha_t}}\left(x_t-\frac{1-\alpha_t}{\sqrt{1-\bar\alpha_t}}\epsilon_\theta(x_t,t)\right)$. Training: sample $x_0$ from data, sample timestep $t$, add noise $\epsilon$, predict $\epsilon_\theta(x_t,t)$. Loss: 
+\[
+L=\E_{x_0\sim p_{data},t\sim [1:T], \epsilon\sim \N(0,I)}\|\epsilon_\theta(x_t,t)-\epsilon\|_2^2, \quad x_t=\sqrt{\bar\alpha_t}x_0+\sqrt{1-\bar\alpha_t}\epsilon. 
+\]
+Sampling:
+\(
+x_{t-1}=\frac{1}{\sqrt{\alpha_t}}\left(x_t-\frac{\beta_t}{\sqrt{1-\bar\alpha_t}}\epsilon_\theta(x_t,t)\right)+\sigma_tz.
+\)
+
+\subsection{Score-Based Models}
+\lowterm{Score}: learn score $\nabla_x \log p(x)$. \lowterm{Langevin dynamics}: use only score. $x_{t+1}=x_t+\eta \nabla_x \log p(x_t)+\sqrt{2\eta}\epsilon_t, \epsilon_t\sim \N(0,I)$. continuous form: $\dd x_t=\nabla_x \log p(x_t)\dd t+\sqrt{2}\dd w_t,, \dd w\sim\N(0,d_t)$. 
+
+
+\lowterm{NCSN}: noise conditional score network. 
+$x_i=x_0+\sigma_i\epsilon$, learn $s_\theta(x_i,\sigma_i)$ to estimate $\nabla_x \log p(x_i)$.  
+
+$x_t=\alpha_tx_0+\sigma_t\epsilon$, score $s_\theta(x_t,t)$? MSE loss $L=\E_{x_t}\|s_\theta(x_t,t)-\nabla_{x_t}\log p(x_t)\|^2$. $\E_{x_t}[s_\theta(x_t,t)^\top \nabla_{x_t}\log p(x_t)]= \E_{x_t}[\nabla\cdot s_\theta(x_t,t)]$, using $\nabla\cdot(sp)=(\nabla\cdot s)p+s^\top \cdot\nabla p$
+
+
+\lowterm{Denoising score matching}: 
+$\nabla_{x_t}\log p(x_t)=\E_{x_0\sim p(\cdot|x_t)}[\nabla_{x_t}\log p(x_t|x_0)]$
+ 
+$\E_{x_t}\|s_\theta(x_t,t)-\nabla_{x_t}\log p(x_t|x_0)\|^2$, 
+
+$L_{DSM}=\E_{x_0\sim p_{data},t\sim[0,1],x_t\sim q(x_t|x_0)} \|s_\theta(x_t,t)-\nabla_{x_t}\log q(x_t|x_0)\|^2$, $q(x_t|x_0)$ is tractable. 
+If $x_t=\alpha_t x_0+\sigma_t\epsilon$, $\nabla_{x_t}\log q(x_t|x_0)=\nabla_{x_t}(-\frac{(x_t-\alpha_tx_0)^2}{2\sigma_i^2})=-\frac{x_t-\alpha x_0}{\sigma_t^2}=-\frac{\epsilon}{\sigma_t}$. Let $s_\theta(x_t,t)=-\frac{\epsilon_\theta(x_t,t)}{\sigma_t}$, loss same as DDPM. 
+
+
+SDE:
+\(
+dx=f(x,t)dt+g(t)dW_t,
+\)
+
+reverse: $dx=[f(x,t)-g(t)^2\nabla_x\log p_t(x)]dt+g(t)d\bar W_t$.
+
+A equivalent ODE (same distribution when same $t$):
+Probability-flow ODE:
+\(
+dx=\left[f(x,t)-\frac12g(t)^2\nabla_x\log p_t(x)\right]dt.
+\)
+Likelihood along ODE:
+\(
+\log p_0(x_0)=\log p_T(x_T)+\int_0^T\tr\left(\frac{\partial f_\theta}{\partial x_t}\right)dt.
+\)
+
+Inference: use learned score to solve SDE/ODE using a solver. Hence \#sample-steps in training and inference can be different. 
+
+DDIM: sample according to schedule 
+
+
+\subsection{DPM-Solver and Applications}
+
+\lowterm{DPM solver} 1 order DPM = DDIM. 
+
+DPM-Solver integrates diffusion ODE with high-order exponential integrators, reducing sampling steps. \lowterm{Latent diffusion}: diffuse in autoencoder latent space, cheaper than pixel space. \key{DiT/SORA}: transformer over spacetime latent patches. \key{DALL-E 2}: CLIP prior + diffusion decoder. \key{DALL-E 3}: synthetic captions improve prompt following. \key{SDEdit}: add noise to input image then denoise under prompt. \key{ControlNet}: extra condition branch injects edges/depth/pose. \key{Logit-normal sampling}: biases timestep sampling toward informative middle region.
+
+\subsection{Flow Matching}
+Continuous flow $dx_t/dt=v_\theta(x_t,t)$. Objective:
+\(
+\mathcal L_{\rm FM}=\E_{t,x_t}\|v_\theta(x_t,t)-u_t(x_t)\|^2.
+\)
+Conditional path from noise $x_0$ to data $x_1$: $x_t=(1-t)x_0+tx_1$, target $u_t=x_1-x_0$. Conditional Flow Matching (CFM) samples pairs and regresses conditional velocity; marginal vector field is recovered in expectation. \key{Non-uniqueness}: many vector fields induce same marginals; choice affects training variance and sampling trajectory. \key{SD3}: flow target often parameterizes velocity between noise/data under continuous timestep.
+
+\section{L8--9 Sequence Modeling}
+\subsection{Sequence Data and Tokenization}
+Sequence data includes language, audio, action; images/DNA/protein can be serialized. Autoregressive factorization:
+\(
+p(x_{1:T})=\prod_{t=1}^T p(x_t|x_{<t}).
+\)
+
+\key{Tokenization}: text $\to$ basic units $\to$ token IDs. Byte-Pair Encoding (BPE) repeatedly merges frequent adjacent symbols; balances vocabulary size and sequence length. \key{Embedding}: token ID $i\to e_i=W_E[i]$; positional info is needed because token embeddings alone are order-free.
+
+\subsection{Autoregressive CNN and Pixel Models}
+\key{WaveNet}: causal/dilated temporal convolution expands receptive field without recurrence. \key{PixelCNN}: image likelihood
+\(
+p(x)=\prod_i p(x_i|x_{<i}). 
+\)
+under raster order; masked convolution prevents access to future pixels. Gated PixelCNN uses gates to improve expressiveness.
+
+\subsection{RNN and LSTM}
+\key{RNN}:
+\(
+h_t=\tanh(W_{xh}x_t+W_{hh}h_{t-1}+b_h),\quad y_t=W_{hy}h_t+b_y.
+\)
+BPTT multiplies many Jacobians; singular values $<1$ vanish, $>1$ explode. 
+
+\key{LSTM}:
+\(
+f_t=\sigma(W_{xf}x_t+W_{hf}h_{t-1}+b_f),\quad
+i_t=\sigma(W_{xi}x_t+W_{hi}h_{t-1}+b_i),
+\)
+\(
+\tilde c_t=\tanh(W_{xc}x_t+W_{hc}h_{t-1}+b_c),\quad
+c_t=f_t\odot c_{t-1}+i_t\odot\tilde c_t,
+\)
+
+\(
+o_t=\sigma(W_{xo}x_t+W_{ho}h_{t-1}+b_o),\quad
+h_t=o_t\odot\tanh(c_t).
+\)
+Additive cell path gives controllable memory; forget gate decides retention.
+
+\subsection{Attention and Transformer}
+For token $t$: $q_t=W_Qx_t$, $k_j=W_Kx_j$, $v_j=W_Vx_j$,
+\(
+\alpha_{tj}=\frac{\exp(q_t^\top k_j/\sqrt{d_k})}{\sum_i\exp(q_t^\top k_i/\sqrt{d_k})},\quad
+y_t=\sum_j\alpha_{tj}v_j.
+\)
+Matrix form:
+\(
+\operatorname{Attn}(Q,K,V)=\softmax(QK^\top/\sqrt{d_k})V.
+\)
+
+\key{Multi-head}: parallel attention subspaces, concatenate and project. \key{Causal mask}: block future tokens. \key{Transformer block}: attention + MLP + residual + normalization. Complexity $O(T^2d)$; FlashAttention reduces memory IO, Mamba/SSM explores linear-time sequence mixing.
+
+\subsection{Objectives and Case Studies}
+\key{Objectives}: autoregressive LM, masked/denoising, contrastive predictive. \key{Recipe}: pretraining, fine-tuning, low-rank tuning. \key{GPT}: decoder-only causal Transformer; next-token pretraining gives in-context learning with scale. \key{ViT}: image patches as tokens. \key{Swin}: shifted local windows for hierarchical vision. \key{CLIP}: contrastive image-text alignment,
+\[
+L=-\frac12\left[\frac1N\sum_i\log\frac{e^{s_{ii}/\tau}}{\sum_j e^{s_{ij}/\tau}}+
+\frac1N\sum_i\log\frac{e^{s_{ii}/\tau}}{\sum_j e^{s_{ji}/\tau}}\right].
+\]
+\key{SigLIP}: pairwise sigmoid loss avoids global softmax. \key{Whisper}: audio Transformer trained on large-scale speech. \key{MAR}: masked autoregressive modeling for images.
+
+\section{L10 Modern Large Models}
+\subsection{Pretraining and Scaling}
+\key{Autoregressive LM}: maximize $\sum_t\log p_\theta(x_t|x_{<t})$. Base model learns continuation; chat model learns instruction-following behavior through post-training. \lowterm{Scaling laws}: loss decreases smoothly with model size $N$, data $D$, compute $C$, often power-law:
+\(
+L(N)\approx L_\infty+aN^{-\alpha},\quad
+L(D)\approx L_\infty+bD^{-\beta}.
+\)
+Compute-optimal training balances parameters and tokens; not simply largest model on fixed data. Larger models reach the same loss with fewer samples / fewer optimization 
+steps. \lowterm{Prompting}: zero-shot/few-shot describes task in context; no parameter update. \lowterm{Instruction tuning}: supervised fine-tuning on instruction-response mixtures.
+
+\subsection{Post Training}
+Using human feedback. 
+\key{SFT}: next-token imitation on human demonstrations. It cannot express preference among multiple valid answers. 
+
+\lowterm{RLHF}:  human preference. Can reward uncertainty awareness, e.g. ``I don't know'' when question is unanswerable. Negative samples provide learning signal unavailable in pure SFT. Helps eliminating hullucination. 
+\key{Reward model}: train from pairwise rankings:
+\[
+L_{\rm RM}=-\log\sigma(r_\phi(x,y_w)-r_\phi(x,y_l)).
+\]
+\key{Policy optimization with KL}:
+\[
+\max_\pi\E_{y\sim\pi(\cdot|x)}[r_\phi(x,y)]-\beta\KL(\pi(\cdot|x)\|\pi_{\rm ref}(\cdot|x)).
+\]
+KL prevents policy from drifting too far from SFT/reference. 
+
+
+\subsection{RAG and Reasoning}
+\key{RAG}: retrieve documents $d$ then generate:
+\[
+p(y|x)\approx\sum_{d\in\mathcal R(x)}p_\theta(y|x,d)p(d|x).
+\]
+Retrieval supplies missing knowledge but does not automatically solve multi-step reasoning. \lowterm{Inference-time scaling}: spend more test-time compute on search, verification, self-consistency, or long reasoning trajectories. For reasoning model:
+\[
+\max_\pi \E_{\tau\sim\pi(\cdot|x)}[R(\operatorname{answer}(\tau),y)]-\beta\KL(\pi\|\pi_{\rm ref}).
+\]
+Answer verifier gives sparse reward; RL can optimize thinking trajectory even without unique chain-of-thought labels.
+
+\subsection{Multimodal Models}
+\key{Vision-language few-shot}: convert image/video tasks to text generation conditioned on visual tokens. \key{Flamingo}: frozen vision encoder + frozen LM with cross-attention layers and Perceiver resampler for interleaved image/video-text. \key{LLaVA}: CLIP vision encoder + projection to Vicuna/LLM; visual instruction tuning teaches chat-style responses. \key{Unified multimodal model}: one decoder handles understanding, generation, editing, reasoning; may use separate experts/tokenizers for text vs image. \key{BAGEL-style idea}: decoder-only unified model with modality-specific experts; understanding often emerges before reasoning/editing, which need larger scale.
+
+\section{Cross-Lecture Map}
+\key{Density models}: EBM defines $p\propto e^{-E}$ but sampling is hard; flow gives exact likelihood via invertible map; VAE gives ELBO; diffusion learns reverse denoising; flow matching learns vector field directly. \key{Implicit models}: GAN learns sampler without tractable likelihood. \key{Sequence models}: Transformer turns all modalities into token sequences. \key{Large models}: pretraining builds capability, post-training aligns behavior, inference-time compute and multimodal grounding extend usability.
+
+\end{multicols*}
+\end{document}
