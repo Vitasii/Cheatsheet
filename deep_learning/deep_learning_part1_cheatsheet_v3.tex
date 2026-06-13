@@ -333,76 +333,151 @@ y_a=x_a,\quad y_b=x_b\odot e^{s(x_a)}+t(x_a),\quad
 \)
 $s,t$: learnable. sometimes needs premutaion among coordinates or linear transformation.  
 
-\key{Glow}: invertible $1\times1$ convolution mixes channels; LU decomposition makes determinant cheap: $\log|\det W|=\sum_i\log|u_{ii}|$. \key{Dequantization}: add uniform noise to discrete pixels so continuous density is well-defined.
+\key{Glow}: invertible $1\times1$ convolution mixes channels. Since the same channel-mixing matrix $W$ is applied at each spatial location,
+\[
+\log\left|\det\frac{d\,\operatorname{conv2D}(h;W)}{dh}\right|
+=H_{\rm sp}W_{\rm sp}\log|\det W|.
+\]
+LU parameterization $W=P\,L\,(U+\operatorname{diag}(s))$ makes
+$\log|\det W|=\sum_i\log|s_i|$ cheap. \key{Dequantization}: add uniform noise to discrete pixels so continuous density is well-defined.
 \key{Continuous NF / Neural ODE}: $\frac{dz(t)}{dt}=f_\theta(z(t),t)$,
 \(
 \log p(z(t_1))=\log p(z(t_0))-\int_{t_0}^{t_1}\tr\left(\frac{\partial f_\theta}{\partial z(t)}\right)dt.
 \)
 
-\subsection{EM and Variational Inference}
-Latent-variable likelihood $\log p_\theta(x)=\log\sum_z p_\theta(x,z)$. Jensen:
+\subsection{GMM and EM}
+Latent-variable likelihood $\log p_\theta(x)=\log\sum_z p_\theta(x,z)$. \key{Generic EM}: E-step estimates/posteriorizes latent variables under old parameters; M-step maximizes expected complete-data log-likelihood.
+\key{GMM responsibility}: for $K$ mixture components,
 \[
-\log p_\theta(x)=\log\E_q\frac{p_\theta(x,z)}{q(z)}
-\ge \E_q\log p_\theta(x,z)+H(q)=\mathcal L(q,\theta).
+\gamma_{ij}:=p(z_i=j|x_i)=
+\frac{\pi_j\N(x_i|\mu_j,\Sigma_j)}
+{\sum_{\ell=1}^{K}\pi_\ell\N(x_i|\mu_\ell,\Sigma_\ell)}.
 \]
-Gap:
-\(
-\log p_\theta(x)-\mathcal L(q,\theta)=\KL(q(z)\|p_\theta(z|x)).
-\) 
-EM: E-step $q(z)=p_{\theta^{old}}(z|x)$, M-step maximize $\E_q\log p_\theta(x,z)$.
+\key{GMM EM lower bound}:
+\[
+\sum_i\log\sum_j\gamma_{ij}
+\frac{\pi_j\N(x_i|\mu_j,\Sigma_j)}{\gamma_{ij}}
+\ge
+\sum_i\sum_j\gamma_{ij}\log
+\frac{\pi_j\N(x_i|\mu_j,\Sigma_j)}{\gamma_{ij}}.
+\]
+E-step fixes parameters and optimizes $\gamma$:
+\[
+\gamma^{(t+1)}=\arg\max_{\gamma_{ij}\ge0,\sum_j\gamma_{ij}=1}
+\sum_{i,j}\gamma_{ij}\log\pi_j^{(t)}\N(x_i|\mu_j^{(t)},\Sigma_j^{(t)})
+-\sum_{i,j}\gamma_{ij}\log\gamma_{ij}.
+\]
+M-step fixes $\gamma$ and optimizes parameters:
+\[
+(\pi,\mu,\Sigma)^{(t+1)}
+=\arg\max_{\pi,\mu,\Sigma}\sum_{i,j}\gamma_{ij}^{(t+1)}
+\log\pi_j\N(x_i|\mu_j,\Sigma_j).
+\]
+
+\subsection{Evidence Lower Bound (ELBO)}
+For latent-variable models, insert any inference distribution $q_\phi(z|x)$ and apply Jensen:
+\[
+\begin{aligned}
+\log p_\theta(x)
+&=\log\int p(z)p_\theta(x|z)\,dz\\
+&=\log\int q_\phi(z|x)\frac{p(z)p_\theta(x|z)}{q_\phi(z|x)}\,dz\\
+&\ge \E_{q_\phi(z|x)}[\log p_\theta(x|z)]-\KL(q_\phi(z|x)\|p(z)).
+\end{aligned}
+\]
+Gap: $\log p_\theta(x)-{\rm ELBO}=\KL(q_\phi(z|x)\|p_\theta(z|x))$.
 
 \subsection{VAE}
-Encoder $q_\phi(z|x)$, decoder $p_\theta(x|z)$, prior $p(z)$. 
-
-ELBO:
-\(
-\log p_\theta(x)\ge \E_{q_\phi(z|x)}[\log p_\theta(x|z)]-\KL(q_\phi(z|x)\|p(z)).
-\) In practice, $q_\phi(z|x)=\N(\mu_\phi(x),\sigma_\phi(x))$, $p_\theta(x|z)=N(\mu_\theta(z),\beta I)$. 
-Reparameterization:
-\(
-z=\mu_\phi(x)+\sigma_\phi(x)\odot\epsilon,\quad \epsilon\sim\N(0,I).
-\) 
-KL of Gaussian can be computed, here
-\(
-\KL(\N(\mu,\sigma^2I)\|\N(0,I))
-=\frac12\sum_i(\mu_i^2+\sigma_i^2-\log\sigma_i^2-1).
-\)
+Parametrize encoder $q_x(z)=\N(\mu_\theta(x),\sigma_\theta(x))$, decoder $p_\psi(x|z)=\N(\psi(z),\beta I)$, prior $p(z)$. 
+\[
+\begin{aligned}
+{\rm ELBO}
+&=\int q_x(z)\log p_\psi(x|z)\,dz-\KL(q_x(z)\|p(z))\\
+&=-\frac1{2\beta}\E_{q_x(z)}\|\psi(z)-x\|_2^2-\KL(q_x(z)\|p(z))\\
+&=-\frac1{2\beta}\E_{\epsilon\sim\N(0,I)}
+\|\psi(\mu_\theta(x)+\sigma_\theta(x)\epsilon)-x\|_2^2-\KL(q_x(z)\|p(z)).
+\end{aligned}
+\]
+Reparameterization: $z=\mu_\theta(x)+\sigma_\theta(x)\epsilon$, $\epsilon\sim\N(0,I)$. If $p(z)=\N(0,I)$, Gaussian KL:
+\[
+\KL(q_x(z)\|p(z))
+=\frac12\|\mu_\theta(x)\|_2^2+\frac12\sigma_\theta^2(x)-\log\sigma_\theta(x)+c.
+\]
+\key{Gaussian KL}: for $p=\N(\mu_1,\sigma_1^2)$, $q=\N(\mu_2,\sigma_2^2)$,
+\[
+\KL(p\|q)=\log\frac{\sigma_2}{\sigma_1}
++\frac{\sigma_1^2+(\mu_1-\mu_2)^2}{2\sigma_2^2}-\frac12.
+\]
+For $d$-dimensional Gaussians:
+\[
+\begin{aligned}
+\KL(\N_1\|\N_2)=\frac12[&
+\tr(\Sigma_2^{-1}\Sigma_1)+(\mu_2-\mu_1)^\top\Sigma_2^{-1}(\mu_2-\mu_1)\\
+&-d+\log\frac{|\Sigma_2|}{|\Sigma_1|}].
+\end{aligned}
+\]
 
 \key{Terms}: reconstruction = data fidelity; KL = latent regularization. \key{PixelVAE/NVAE}: hierarchical latent variables improve global coherence and likelihood.
 
 \section{L7 Diffusion and Flow Matching}
 \subsection{DDPM}
-Forward:
-\(
-q(x_t|x_{t-1})=\N(\sqrt{\alpha_t}x_{t-1},\beta_tI),\beta_t=1-\alpha_t, \quad \bar\alpha_t=\prod_{s=1}^t\alpha_s.
-\)
-
-Closed form:
-\(
-q(x_t|x_0)=\N(\sqrt{\bar\alpha_t}x_0,(1-\bar\alpha_t)I),\quad
-x_t=\sqrt{\bar\alpha_t}x_0+\sqrt{1-\bar\alpha_t}\epsilon.
-\)
-
-Reverse: use $p_\theta(x_{t-1}|x_t)$ to estimate the prob, $p_\theta(0:T)=p(x_T)\prod_t p_\theta(x_{t-1}|x_t)$, $p(x_T)$ is gaussian prior. 
-
-ELBO $\log p_\theta(x_0)\geq \E_{x_{1:T}\sim q(\cdot|x_0)}[\log\frac{p_\theta(x_{0:T})}{q(x_{1:T}|x_0)}]$, use markovian and use tractable $q(x_{t-1}|x_t,x_0)$: $L=\E_q[\log\frac{p(x_T)}{q(x_T|x_0)}]+\E_q[\log p_\theta(x_0|x_1)]+\sum_{t=2}^T{\rm KL}(q(x_{t-1}|x_t,x_0)\|p_\theta(x_{t-1}|x_t))\text{(core of DDPM)}$. 
-
-Posterior $q(x_{t-1}|x_t,x_0)=\frac{1}{q(x_t|x_0)}q(x_t|x_{t-1},x_0)q(x_{t-1}|x_0)$, which is a Gaussian $N(\tilde\mu_t,\tilde\beta_tI)$. Let $x_t=\sqrt{\bar\alpha_t}x_0+\sqrt{1-\bar\alpha_t}\epsilon$, 
-\(
-\tilde\mu_t=\frac{\sqrt{\bar\alpha_{t-1}}\beta_t}{1-\bar\alpha_t}x_0+
-\frac{\sqrt{\alpha_t}(1-\bar\alpha_{t-1})}{1-\bar\alpha_t}x_t
-=\frac{1}{\sqrt{\alpha_t}}\left(x_t-\frac{1-\alpha_t}{\sqrt{1-\bar\alpha_t}}\epsilon\right),
-\tilde\beta_t=\frac{1-\bar\alpha_{t-1}}{1-\bar\alpha_t}\beta_t.
-\) 
-
-Predict noise $\epsilon_\theta(x_t,t)$: $p_\theta(x_{t-1}|x_t)=\N(\mu_\theta(x_t,t),\sigma_t^2I)$, $\mu_\theta(x_t,t)=\frac{1}{\sqrt{\alpha_t}}\left(x_t-\frac{1-\alpha_t}{\sqrt{1-\bar\alpha_t}}\epsilon_\theta(x_t,t)\right)$. Training: sample $x_0$ from data, sample timestep $t$, add noise $\epsilon$, predict $\epsilon_\theta(x_t,t)$. Loss: 
+\key{Forward}: add Gaussian noise with $\alpha_t=1-\beta_t$, $\bar\alpha_t=\prod_{s=1}^t\alpha_s$:
 \[
-L=\E_{x_0\sim p_{data},t\sim [1:T], \epsilon\sim \N(0,I)}\|\epsilon_\theta(x_t,t)-\epsilon\|_2^2, \quad x_t=\sqrt{\bar\alpha_t}x_0+\sqrt{1-\bar\alpha_t}\epsilon. 
+\begin{aligned}
+q(x_t\mid x_{t-1})&:=\N\!\left(x_t;\sqrt{1-\beta_t}\,x_{t-1},\beta_t I\right),\\
+q(x_t\mid x_0)&=\N\!\left(x_t;\sqrt{\bar\alpha_t}x_0,(1-\bar\alpha_t)I\right).
+\end{aligned}
 \]
-Sampling:
-\(
-x_{t-1}=\frac{1}{\sqrt{\alpha_t}}\left(x_t-\frac{\beta_t}{\sqrt{1-\bar\alpha_t}}\epsilon_\theta(x_t,t)\right)+\sigma_tz.
-\)
+\key{Reverse}:
+\[
+p_\theta(x_{0:T})=p(x_T)\prod_{t=1}^T p_\theta(x_{t-1}\mid x_t),\quad
+p(x_T)=\N(0,I),
+\]
+\[
+p_\theta(x_{t-1}\mid x_t)=\N(x_{t-1};\mu_\theta(x_t,t),\sigma_t^2I).
+\]
+\key{Loss / ELBO identity}:
+\[
+-\log p(x)=-\int q_\phi(z)\log p(x|z)\,dz
++\KL(q_\phi(z)\|p(z))-\KL(q_\phi(z)\|p(z|x)).
+\]
+\key{True posterior and Gaussian KL}: 
+\[
+q(x_{t-1}\mid x_t,x_0)=\N(x_{t-1};\tilde\mu_t(x_t,x_0),\tilde\beta_tI),
+\quad
+\tilde\beta_t=\frac{1-\bar\alpha_{t-1}}{1-\bar\alpha_t}\beta_t,
+\]
+\[
+\tilde\mu_t=
+\frac{\sqrt{\bar\alpha_{t-1}}\beta_t}{1-\bar\alpha_t}x_0+
+\frac{\sqrt{\alpha_t}(1-\bar\alpha_{t-1})}{1-\bar\alpha_t}x_t.
+\]
+\[
+L_{t-1}=\E_q\left[
+\frac{1}{2\sigma_t^2}
+\|\tilde\mu_t(x_t,x_0)-\mu_\theta(x_t,t)\|^2
+\right]+C.
+\]
+\key{Mean/noise prediction}: $\mu_\theta(x_t,t)\approx\tilde\mu_t(x_t,x_0)$. With $x_t=\sqrt{\bar\alpha_t}x_0+\sqrt{1-\bar\alpha_t}\epsilon$,
+\[
+\tilde\mu_t=\frac{1}{\sqrt{\alpha_t}}
+\left(x_t-\frac{\beta_t}{\sqrt{1-\bar\alpha_t}}\epsilon\right),\quad
+\mu_\theta(x_t,t)=\frac{1}{\sqrt{\alpha_t}}
+\left(x_t-\frac{\beta_t}{\sqrt{1-\bar\alpha_t}}\epsilon_\theta(x_t,t)\right).
+\]
+\[
+L_{t-1}=\E_{x_0,\epsilon}\left[
+\frac{\beta_t^2}{2\sigma_t^2\alpha_t(1-\bar\alpha_t)}
+\|\epsilon-\epsilon_\theta(x_t,t)\|^2
+\right]+C.
+\]
+Training: input $(x_t,t)$, predict noise $\epsilon$; $\epsilon_\theta(x_t,t)$ is commonly a U-Net with timestep encoding. \key{Sampling}:
+\[
+x_{t-1}
+=\frac{1}{\sqrt{\alpha_t}}
+\left(x_t-\frac{\beta_t}{\sqrt{1-\bar\alpha_t}}\epsilon_\theta(x_t,t)\right)
++\sigma_tz,\quad z\sim\N(0,I).
+\]
+Start from $x_T\sim\N(0,I)$ and iterate to $x_0$.
 
 \subsection{Score-Based Models}
 \lowterm{Score}: learn score $\nabla_x \log p(x)$. \lowterm{Langevin dynamics}: use only score. $x_{t+1}=x_t+\eta \nabla_x \log p(x_t)+\sqrt{2\eta}\epsilon_t, \epsilon_t\sim \N(0,I)$. continuous form: $\dd x_t=\nabla_x \log p(x_t)\dd t+\sqrt{2}\dd w_t,, \dd w\sim\N(0,d_t)$. 
@@ -519,47 +594,73 @@ L=-\frac12\left[\frac1N\sum_i\log\frac{e^{s_{ii}/\tau}}{\sum_j e^{s_{ij}/\tau}}+
 \key{SigLIP}: pairwise sigmoid loss avoids global softmax. \key{Whisper}: audio Transformer trained on large-scale speech. \key{MAR}: masked autoregressive modeling for images.
 
 \section{L10 Modern Large Models}
-\subsection{Pretraining and Scaling}
-\key{Autoregressive LM}: maximize $\sum_t\log p_\theta(x_t|x_{<t})$. Base model learns continuation; chat model learns instruction-following behavior through post-training. \lowterm{Scaling laws}: loss decreases smoothly with model size $N$, data $D$, compute $C$, often power-law:
-\(
-L(N)\approx L_\infty+aN^{-\alpha},\quad
-L(D)\approx L_\infty+bD^{-\beta}.
-\)
-Compute-optimal training balances parameters and tokens; not simply largest model on fixed data. Larger models reach the same loss with fewer samples / fewer optimization 
-steps. \lowterm{Prompting}: zero-shot/few-shot describes task in context; no parameter update. \lowterm{Instruction tuning}: supervised fine-tuning on instruction-response mixtures.
+\subsection{Pretraining, Scaling, Prompting}
+\key{Pipeline}: $\text{Pretraining}\to\text{Base GPT}\to\text{SFT}\to\text{RLHF}\to\text{ChatGPT-like}$. Pretraining builds capability by next-token prediction; post-training reshapes behavior into instruction-following. Base GPT tends to continue text; chat model tries to answer the user.
+\key{Scaling laws}: held-out loss decreases smoothly as model size $N$, data $D$, and compute $C$ grow, approximately by power law. The important lesson is not the exact constants but bottleneck balance: scale parameters, tokens, and compute together. Useful heuristics: data should grow with model size ($D\propto N^{0.74}$); compute-optimal training spends extra compute mostly on larger $N$, somewhat on batch $B$, and barely on serial steps $S$.
+\key{Prompting}: zero-shot/few-shot puts task description/examples in context without parameter updates. GPT-3 made in-context learning practical; instruction tuning makes this behavior more reliable by training on natural-language tasks.
 
-\subsection{Post Training}
-Using human feedback. 
-\key{SFT}: next-token imitation on human demonstrations. It cannot express preference among multiple valid answers. 
+\subsection{SFT and RLHF}
+\key{SFT}: learn from human demonstrations $(x,y)$ by next-token imitation:
+\[
+\mathcal L_{\rm SFT}(\theta)
+=-\E_{\mathcal D_{\rm SFT}}\sum_t\log\pi_\theta(y_t\mid x,y_{<t}).
+\]
+It teaches desired response style but only uses positive examples, so it cannot directly say why one acceptable answer is better than another. \key{Reward model}: pairwise preference $y_w\succ y_l$ teaches a scalar reward $r_\phi(x,y)$:
+\[
+P_\phi(y_w\succ y_l\mid x)=\sigma(r_\phi(x,y_w)-r_\phi(x,y_l)).
+\]
+\[
+\mathcal L_{\rm RM}=-\E\log\sigma(r_\phi(x,y_w)-r_\phi(x,y_l)).
+\]
+\key{RLHF}: optimize the policy for reward while staying near a reference/SFT model:
+\[
+\max_\theta\E_{x\sim\mathcal D,\ y\sim\pi_\theta(\cdot\mid x)}
+\left[r_\phi(x,y)-\beta\KL(\pi_\theta(\cdot\mid x)\|\pi_{\rm ref}(\cdot\mid x))\right].
+\]
+\key{Why KL}: prevents reward hacking and language-quality drift. \key{Pretrain vs post-train}: pretraining compresses web text distribution; post-training optimizes human utility/preference over responses.
 
-\lowterm{RLHF}:  human preference. Can reward uncertainty awareness, e.g. ``I don't know'' when question is unanswerable. Negative samples provide learning signal unavailable in pure SFT. Helps eliminating hullucination. 
-\key{Reward model}: train from pairwise rankings:
+\subsection{Hallucination, RAG, Reasoning}
+\key{Hallucination}: SFT can teach a confident answer even when the base model lacks knowledge. Preference/RLHF can reward uncertainty awareness, e.g. prefer ``I don't know'' over wrong entities. Negative samples $(x,y^+,y^-)$ are valuable because they mark bad-but-plausible behavior.
+\key{RAG}: combine parametric memory in $\theta$ with retrieved non-parametric memory $z$:
 \[
-L_{\rm RM}=-\log\sigma(r_\phi(x,y_w)-r_\phi(x,y_l)).
+p(y\mid x)\approx\sum_{z\in\operatorname{TopK}(x)}
+p_\eta(z\mid x)\,p_\theta(y\mid x,z).
 \]
-\key{Policy optimization with KL}:
+RAG helps latest knowledge without retraining, but retrieval is not the same as reasoning. \key{LRM}: reasoning model spends test-time compute on internal thinking before final answer:
 \[
-\max_\pi\E_{y\sim\pi(\cdot|x)}[r_\phi(x,y)]-\beta\KL(\pi(\cdot|x)\|\pi_{\rm ref}(\cdot|x)).
+x\rightarrow z_{1:m}\rightarrow y.
 \]
-KL prevents policy from drifting too far from SFT/reference. 
-
-
-\subsection{RAG and Reasoning}
-\key{RAG}: retrieve documents $d$ then generate:
+\lowterm{CoT prompting} elicits intermediate reasoning through prompt examples; reasoning RL trains the behavior with verifier reward. Thinking labels are not unique, so RL can reward final correctness without prescribing one chain. Trajectory:
 \[
-p(y|x)\approx\sum_{d\in\mathcal R(x)}p_\theta(y|x,d)p(d|x).
+\tau=(z_1,\ldots,z_m,y_1,\ldots,y_T),\quad
+R(x,\tau)=
+\begin{cases}
++1,&V(x,y)=\text{correct},\\
+-1,&V(x,y)=\text{incorrect},
+\end{cases}
 \]
-Retrieval supplies missing knowledge but does not automatically solve multi-step reasoning. \lowterm{Inference-time scaling}: spend more test-time compute on search, verification, self-consistency, or long reasoning trajectories. For reasoning model:
+\key{Agent loop}: reasoning can extend to environment interaction with actions:
 \[
-\max_\pi \E_{\tau\sim\pi(\cdot|x)}[R(\operatorname{answer}(\tau),y)]-\beta\KL(\pi\|\pi_{\rm ref}).
+s_t=(x,\text{memory},\text{observations}_{<t}),\quad
+a_t\in\{\text{search},\text{browse},\text{code},\text{write},\ldots\}.
 \]
-Answer verifier gives sparse reward; RL can optimize thinking trajectory even without unique chain-of-thought labels.
 
 \subsection{Multimodal Models}
-\key{Vision-language few-shot}: convert image/video tasks to text generation conditioned on visual tokens. \key{Flamingo}: frozen vision encoder + frozen LM with cross-attention layers and Perceiver resampler for interleaved image/video-text. \key{LLaVA}: CLIP vision encoder + projection to Vicuna/LLM; visual instruction tuning teaches chat-style responses. \key{Unified multimodal model}: one decoder handles understanding, generation, editing, reasoning; may use separate experts/tokenizers for text vs image. \key{BAGEL-style idea}: decoder-only unified model with modality-specific experts; understanding often emerges before reasoning/editing, which need larger scale.
+\key{Grounding}: language-only models condition on text; multimodal models condition on text plus image/video/audio/interface inputs:
+\[
+p_\theta(y\mid x_{\rm text},x_{\rm image},x_{\rm video},\ldots).
+\]
+\key{Flamingo}: extends GPT-style few-shot prompting to interleaved text-image/video input:
+\[
+p_\theta(y\mid t_1,v_1,t_2,v_2,\ldots,t_k,v_k,t_{k+1}).
+\]
+Architecture: frozen vision encoder + frozen LM; Perceiver Resampler compresses many visual features into few visual tokens; gated cross-attention injects visual information while protecting frozen LM behavior. \key{LLaVA}: visual instruction tuning samples $(I,x_{\rm instruction},y_{\rm assistant})$; CLIP features are projected into LM embedding space:
+\[
+F_I=f_{\rm CLIP}(I),\quad Z_I=F_IW,\quad [Z_I;E(x_1);\ldots;E(x_T)].
+\]
+\key{Two-stage training}: first align visual features by training projection $W$; then freeze vision encoder and tune projection + LM for assistant behavior. \key{Unified multimodal/BAGEL}: one decoder for understanding/generation/editing/reasoning on interleaved data $t_1,I_1,t_2,I_2,\ldots,V_1,t_k$; ViT pathway supports understanding, VAE pathway supports generation/reconstruction. Emergence order: understanding $\to$ generation $\to$ editing $\to$ reasoning.
 
-\section{Cross-Lecture Map}
-\key{Density models}: EBM defines $p\propto e^{-E}$ but sampling is hard; flow gives exact likelihood via invertible map; VAE gives ELBO; diffusion learns reverse denoising; flow matching learns vector field directly. \key{Implicit models}: GAN learns sampler without tractable likelihood. \key{Sequence models}: Transformer turns all modalities into token sequences. \key{Large models}: pretraining builds capability, post-training aligns behavior, inference-time compute and multimodal grounding extend usability.
+
 
 \end{multicols*}
 \end{document}
