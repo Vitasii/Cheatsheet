@@ -286,9 +286,11 @@ where $f(x;\phi)$ is the final activation layer of $D$. \key{Other tricks}: One-
 
 \subsection{WGAN Family}
 JSD can be flat when supports do not overlap. Wasserstein-1:
-\(
-W(p,q)=\sup_{\|f\|_L\le1}\E_{x\sim p}f(x)-\E_{x\sim q}f(x).
-\) 
+\[
+W(p,q)=\sup_{\|f\|_L\le1}\E_{x\sim p}f(x)-\E_{x\sim q}f(x)
+=\inf_{\gamma\in\Gamma(p,q)} \int \gamma(x,y)\|x-y\|_2\dd x\dd y.
+\]
+$\|f\|_L\le1$: $|f(x)-f(y)|\leq \|x-y\|_2$.  $\Gamma(p,q)$: marginal distribution is $p,q$, $\int\gamma(x,y)\dd x=q(y)$, $\int \gamma(x,y)\dd y=p(x)$. 
 
 \lowterm{WGAN}: critic $f_\phi$, no $D$. 
 WGAN objective:
