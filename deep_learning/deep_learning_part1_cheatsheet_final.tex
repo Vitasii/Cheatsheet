@@ -533,11 +533,13 @@ DDIM: sample according to schedule
 DPM-Solver integrates diffusion ODE with high-order exponential integrators, reducing sampling steps. \lowterm{Latent diffusion}: diffuse in autoencoder latent space, cheaper than pixel space. \key{DiT/SORA}: transformer over spacetime latent patches. \key{DALL-E 2}: CLIP prior + diffusion decoder. \key{DALL-E 3}: synthetic captions improve prompt following. \key{SDEdit}: add noise to input image then denoise under prompt. \key{ControlNet}: extra condition branch injects edges/depth/pose. \key{Logit-normal sampling}: biases timestep sampling toward informative middle region.
 
 \subsection{Flow Matching}
-Continuous flow $dx_t/dt=v_\theta(x_t,t)$. Objective:
-\(
-\mathcal L_{\rm FM}=\E_{t,x_t}\|v_\theta(x_t,t)-u_t(x_t)\|^2.
-\)
-Conditional path from noise $x_0$ to data $x_1$: $x_t=(1-t)x_0+tx_1$, target $u_t=x_1-x_0$. Conditional Flow Matching (CFM) samples pairs and regresses conditional velocity; marginal vector field is recovered in expectation. \key{Non-uniqueness}: many vector fields induce same marginals; choice affects training variance and sampling trajectory. \key{SD3}: flow target often parameterizes velocity between noise/data under continuous timestep.
+Continuous Normalizing Flow (CNF): $\frac{dx_t}{dt}=u_\theta(t,x_t)$, continuous change of variables $\frac{d\log p_t(x_t)}{dt}=-\operatorname{div}(u_\theta(t,x_t))$.
+If $u(t,x)$ transports $p_0$ to $p_1$, Flow Matching regresses it:
+$\mathcal L_{\rm FM}=\E_{t\sim U[0,1],x\sim p_t}\|u_\theta(t,x)-u(t,x)\|^2$.
+\key{CFM}: conditional path, e.g. $x_t=(1-t)x_0+tx_1$, $u_t=x_1-x_0$; objective
+$\mathcal L_{\rm CFM}=\E_{t,x_1\sim q,x_t\sim p_t(x|x_1)}
+\|u_\theta(t,x)-u_t(x|x_1)\|^2$.
+Marginal vector field is recovered in expectation. \key{Non-uniqueness}: many vector fields induce same marginals; choice affects training variance and sampling trajectory. \key{SD3}: flow target often parameterizes velocity between noise/data under continuous timestep.
 
 \section{L8--9 Sequence Modeling}
 \subsection{Sequence Data and Tokenization}
