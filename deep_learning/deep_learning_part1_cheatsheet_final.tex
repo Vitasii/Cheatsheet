@@ -666,8 +666,66 @@ F_I=f_{\rm CLIP}(I),\quad Z_I=F_IW,\quad [Z_I;E(x_1);\ldots;E(x_T)].
 \]
 \key{Two-stage training}: first align visual features by training projection $W$; then freeze vision encoder and tune projection + LM for assistant behavior. \key{Unified multimodal/BAGEL}: one decoder for understanding/generation/editing/reasoning on interleaved data $t_1,I_1,t_2,I_2,\ldots,V_1,t_k$; ViT pathway supports understanding, VAE pathway supports generation/reconstruction. Emergence order: understanding $\to$ generation $\to$ editing $\to$ reasoning.
 
-\section{Cross-Lecture Map}
-\key{Density models}: EBM defines $p\propto e^{-E}$ but sampling is hard; flow gives exact likelihood via invertible map; VAE gives ELBO; diffusion learns reverse denoising; flow matching learns vector field directly. \key{Implicit models}: GAN learns sampler without tractable likelihood. \key{Sequence models}: Transformer turns all modalities into token sequences. \key{Large models}: pretraining builds capability, post-training aligns behavior, inference-time compute and multimodal grounding extend usability.
+\section{Homework}
+\key{Log-sum inequality}: for $a_i,b_i\ge0$ and positive sums,
+\[
+\sum_i a_i\log\frac{a_i}{b_i}\ge
+\left(\sum_i a_i\right)\log\frac{\sum_i a_i}{\sum_i b_i}.
+\]
+Two-term form:
+\[
+(a_1+a_2)\log\frac{a_1+a_2}{b_1+b_2}
+\le
+a_1\log\frac{a_1}{b_1}+a_2\log\frac{a_2}{b_2}.
+\]
+\key{KL joint convexity}: by applying log-sum inequality pointwise and summing over $x$,
+\[
+\KL(\lambda p_1+(1-\lambda)p_2\|\lambda q_1+(1-\lambda)q_2)
+\le
+\lambda\KL(p_1\|q_1)+(1-\lambda)\KL(p_2\|q_2).
+\]
+\key{Gaussian density}: 1D $x\sim\N(\mu,\sigma^2)$,
+$p(x)=\frac1{\sqrt{2\pi}\sigma}\exp(-\frac{(x-\mu)^2}{2\sigma^2})$.
+$n$D $x\sim\N(\mu,\Sigma)$,
+$p(x)=\frac{\exp[-\frac12(x-\mu)^\top\Sigma^{-1}(x-\mu)]}{(2\pi)^{n/2}|\Sigma|^{1/2}}$.
+\key{Gaussian KL}: for $\N_0=\N(\mu_0,\Sigma_0)$ and $\N_1=\N(\mu_1,\Sigma_1)$ in $\R^d$,
+\begin{align*}
+\KL(\N_0\|\N_1)
+&=\frac12\left(
+\tr(\Sigma_1^{-1}\Sigma_0)
++(\mu_1-\mu_0)^\top\Sigma_1^{-1}(\mu_1-\mu_0)
+\right.\\[-1pt]
+&\qquad\left.
+-d+\log\frac{|\Sigma_1|}{|\Sigma_0|}
+\right).
+\end{align*}
+\key{JSD metric}: $\sqrt{\operatorname{JSD}}$ satisfies triangle inequality:
+\[
+\sqrt{\operatorname{JSD}(p_1\|p_2)}
++\sqrt{\operatorname{JSD}(p_2\|p_3)}
+\ge
+\sqrt{\operatorname{JSD}(p_1\|p_3)}.
+\]
+\key{$W$--TV--JSD bound}: assume $\|z-z'\|_2\le C$. Let
+\[
+\alpha={\rm TV}(\mu,\nu)=\frac12\|\mu-\nu\|_1,\quad
+\eta(z)=\min\{\mu(z),\nu(z)\},\quad \sum_z\eta(z)=1-\alpha.
+\]
+Residuals: $\mu_{\rm res}=\mu-\eta$, $\nu_{\rm res}=\nu-\eta$, $\tilde\mu=\mu_{\rm res}/\alpha$, $\tilde\nu=\nu_{\rm res}/\alpha$ if $\alpha>0$. Coupling:
+\[
+\gamma(z,z')=\eta(z)\mathbf1_{\{z=z'\}}+\alpha\tilde\mu(z)\tilde\nu(z').
+\]
+Its marginals are $\mu,\nu$, so
+\[
+W(\mu,\nu)\le\sum_{z,z'}\gamma(z,z')\|z-z'\|_2
+\le C\alpha=C\,{\rm TV}(\mu,\nu).
+\]
+\key{Pinsker inequality}: standard form under natural logarithm:
+\[
+\KL(p\|q)\ge 2\,{\rm TV}(p,q)^2,
+\qquad
+{\rm TV}(p,q)\le\sqrt{\frac12\KL(p\|q)}.
+\]
 
 \end{multicols*}
 \end{document}
