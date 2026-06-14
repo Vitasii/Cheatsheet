@@ -421,6 +421,15 @@ For $p(z)=\N(0,I)$,
 \]
 \key{PixelVAE/NVAE}: hierarchical latent variables improve global coherence and likelihood.
 
+\key{Inclusive vs Exclusive KL}:
+If $q$ is Gaussian, 
+optimizing \key{exclusive (reverse) KL} $\min_q {\rm KL}(q\|p)$: $q$ will capture the largest (big prob) mode in $p$, concentrate on it, with sharper distribution (small variance). 
+optimizing \key{inclusive (forward) KL} $\min_q {\rm KL}(p\|q)$: $q$ have to cover the support of $p$, the distribution is flatter (big variance). 
+
+\key{Forward vs Reverse KL}:
+In VAE, use reverse KL ${\rm KL}(q_\phi(z|x)\|p(z|x))$. If use forward KL ${\rm KL}(p(z|x)\|q_\phi(z|x))$, problem: we cannot sample from true posterior $p(z|x)$ (which is what we want to fit). 
+
+
 \section{L7 Diffusion and Flow Matching}
 \subsection{DDPM}
 \key{Forward}: gradually add Gaussian noise,
@@ -637,9 +646,9 @@ p(y\mid x)\approx\sum_{z\in\operatorname{TopK}(x)}
 p_\eta(z\mid x)\,p_\theta(y\mid x,z).
 \]
 RAG helps latest knowledge without retraining, but retrieval is not the same as reasoning. \key{LRM}: reasoning model spends test-time compute on internal thinking before final answer:
-\[
+\(
 x\rightarrow z_{1:m}\rightarrow y.
-\]
+\)
 \lowterm{CoT prompting} elicits intermediate reasoning through prompt examples; reasoning RL trains the behavior with verifier reward. Thinking labels are not unique, so RL can reward final correctness without prescribing one chain. Trajectory:
 \[
 \tau=(z_1,\ldots,z_m,y_1,\ldots,y_T),\quad
@@ -682,27 +691,31 @@ Two-term form:
 \le
 a_1\log\frac{a_1}{b_1}+a_2\log\frac{a_2}{b_2}.
 \]
+
 \key{KL joint convexity}: by applying log-sum inequality pointwise and summing over $x$,
-\[
+\(
 \KL(\lambda p_1+(1-\lambda)p_2\|\lambda q_1+(1-\lambda)q_2)
 \le
 \lambda\KL(p_1\|q_1)+(1-\lambda)\KL(p_2\|q_2).
-\]
+\)
+
 \key{Gaussian density}: 1D $x\sim\N(\mu,\sigma^2)$,
 $p(x)=\frac1{\sqrt{2\pi}\sigma}\exp(-\frac{(x-\mu)^2}{2\sigma^2})$.
+
 $n$D $x\sim\N(\mu,\Sigma)$,
 $p(x)=\frac{\exp[-\frac12(x-\mu)^\top\Sigma^{-1}(x-\mu)]}{(2\pi)^{n/2}|\Sigma|^{1/2}}$.
+
 \key{Gaussian KL}: for $\N_0=\N(\mu_0,\Sigma_0)$ and $\N_1=\N(\mu_1,\Sigma_1)$ in $\R^d$,
-\begin{align*}
+
+\(
 \KL(\N_0\|\N_1)
-&=\frac12\left(
+=\frac12\left(
 \tr(\Sigma_1^{-1}\Sigma_0)
 +(\mu_1-\mu_0)^\top\Sigma_1^{-1}(\mu_1-\mu_0)
-\right.\\[-1pt]
-&\qquad\left.
 -d+\log\frac{|\Sigma_1|}{|\Sigma_0|}
-\right).
-\end{align*}
+\right)
+\)
+
 \key{JSD metric}: $\sqrt{\operatorname{JSD}}$ satisfies triangle inequality:
 \[
 \sqrt{\operatorname{JSD}(p_1\|p_2)}
@@ -710,15 +723,18 @@ $p(x)=\frac{\exp[-\frac12(x-\mu)^\top\Sigma^{-1}(x-\mu)]}{(2\pi)^{n/2}|\Sigma|^{
 \ge
 \sqrt{\operatorname{JSD}(p_1\|p_3)}.
 \]
+
 \key{$W$--TV--JSD bound}: assume $\|z-z'\|_2\le C$. Let
-\[
+\(
 \alpha={\rm TV}(\mu,\nu)=\frac12\|\mu-\nu\|_1,\quad
 \eta(z)=\min\{\mu(z),\nu(z)\},\quad \sum_z\eta(z)=1-\alpha.
-\]
+\)
+
 Residuals: $\mu_{\rm res}=\mu-\eta$, $\nu_{\rm res}=\nu-\eta$, $\tilde\mu=\mu_{\rm res}/\alpha$, $\tilde\nu=\nu_{\rm res}/\alpha$ if $\alpha>0$. Coupling:
-\[
+\(
 \gamma(z,z')=\eta(z)\mathbf1_{\{z=z'\}}+\alpha\tilde\mu(z)\tilde\nu(z').
-\]
+\)
+
 Its marginals are $\mu,\nu$, so
 \[
 W(\mu,\nu)\le\sum_{z,z'}\gamma(z,z')\|z-z'\|_2
